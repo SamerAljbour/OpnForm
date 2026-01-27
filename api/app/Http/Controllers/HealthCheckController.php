@@ -18,7 +18,7 @@ class HealthCheckController extends Controller
 
         $checks = [
             'database' => false,
-            'redis' => false,
+            // 'redis' => false,
         ];
         $overallStatus = true;
 
@@ -30,13 +30,13 @@ class HealthCheckController extends Controller
             $overallStatus = false;
         }
 
-        try {
-            Redis::ping();
-            $checks['redis'] = true;
-        } catch (Throwable $e) {
-            Log::error('Health check: Redis connection failed', ['exception' => $e->getMessage()]);
-            $overallStatus = false;
-        }
+        // try {
+        //     Redis::ping();
+        //     $checks['redis'] = true;
+        // } catch (Throwable $e) {
+        //     Log::error('Health check: Redis connection failed', ['exception' => $e->getMessage()]);
+        //     $overallStatus = false;
+        // }
 
         if ($overallStatus) {
             return response()->json([
