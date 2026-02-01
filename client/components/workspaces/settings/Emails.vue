@@ -1,20 +1,29 @@
 <template>
   <div class="space-y-4">
-    <div class="flex flex-col flex-wrap items-start justify-between gap-4 sm:flex-row sm:items-center">
+    <div
+      class="flex flex-col flex-wrap items-start justify-between gap-4 sm:flex-row sm:items-center"
+    >
       <div>
-        <h3 class="text-lg font-medium text-neutral-900">Email Settings</h3>
+        <h3 class="text-lg font-medium text-neutral-900">
+          اعدادات البريد الإلكتروني
+        </h3>
         <p class="mt-1 text-sm text-neutral-500">
-          Customize email sender - connect your SMTP server.
+          قم بإعداد إعدادات البريد الإلكتروني الخاصة بك لإرسال النماذج باستخدام
+          نطاقك وعنوان بريدك الإلكتروني الخاص.
         </p>
       </div>
 
-      <UButton
+      <!-- <UButton
         label="Help"
         icon="i-heroicons-question-mark-circle"
         variant="outline"
         color="neutral"
-        @click="crisp.openHelpdeskArticle('how-to-send-emails-using-your-own-domain-name-and-email-address-13kkcif')"
-      />
+        @click="
+          crisp.openHelpdeskArticle(
+            'how-to-send-emails-using-your-own-domain-name-and-email-address-13kkcif',
+          )
+        "
+      /> -->
     </div>
 
     <UAlert
@@ -25,18 +34,18 @@
       variant="subtle"
       title="Pro plan required"
       description="Please upgrade your account to setup an email settings."
-      :actions="[{
-        label: 'Try Pro plan',
-        color: 'warning',
-        variant: 'solid',
-        onClick: () => openSubscriptionModal()
-      }]"
+      :actions="[
+        {
+          label: 'Try Pro plan',
+          color: 'warning',
+          variant: 'solid',
+          onClick: () => openSubscriptionModal(),
+        },
+      ]"
     />
 
     <VForm size="sm">
-      <form
-        @submit.prevent="saveChanges"
-      >
+      <form @submit.prevent="saveChanges">
         <div class="max-w-sm">
           <TextInput
             :form="emailSettingsForm"
@@ -90,13 +99,15 @@
           />
         </div>
 
-        <div class="mt-4 flex items-center justify-between w-full max-w-sm flex-wrap gap-2">
+        <div
+          class="mt-4 flex items-center justify-between w-full max-w-sm flex-wrap gap-2"
+        >
           <UButton
             type="submit"
             :loading="emailSettingsForm.busy"
             :disabled="!workspace.is_pro"
           >
-            Save Domain(s)
+            حفظ النطاق
           </UButton>
           <UButton
             color="neutral"
@@ -105,7 +116,7 @@
             :disabled="!workspace.is_pro"
             @click="clearEmailSettings"
           >
-            Clear settings
+            مسح الإعدادات
           </UButton>
         </div>
       </form>
@@ -114,47 +125,47 @@
 </template>
 
 <script setup>
-const alert = useAlert()
+const alert = useAlert();
 
-const { current: workspace } = useCurrentWorkspace()
+const { current: workspace } = useCurrentWorkspace();
 
-const { openSubscriptionModal: openModal } = useAppModals()
-const crisp = useCrisp()
+const { openSubscriptionModal: openModal } = useAppModals();
+const crisp = useCrisp();
 
 const openSubscriptionModal = () => {
-  openModal({ modal_title: 'Upgrade to send emails using your own domain' })
-}
+  openModal({ modal_title: "Upgrade to send emails using your own domain" });
+};
 
 const encryptionOptions = [
-  { name: 'tls', label: 'TLS' },
-  { name: 'ssl', label: 'SSL' },
-  { name: 'none', label: 'None' }
-]
+  { name: "tls", label: "TLS" },
+  { name: "ssl", label: "SSL" },
+  { name: "none", label: "None" },
+];
 
 const emailSettingsForm = useForm({
-  host: '',
-  port: '',
-  encryption: 'tls',
-  username: '',
-  password: '',
-  sender_address: ''
-})
+  host: "",
+  port: "",
+  encryption: "tls",
+  username: "",
+  password: "",
+  sender_address: "",
+});
 
 onMounted(() => {
-  initEmailSettings()
-})
+  initEmailSettings();
+});
 
 watch(
   () => workspace,
   () => {
-    initEmailSettings()
+    initEmailSettings();
   },
-)
+);
 
 const clearEmailSettings = () => {
-  emailSettingsForm.reset()
-  saveChanges()
-}
+  emailSettingsForm.reset();
+  saveChanges();
+};
 
 const saveChanges = () => {
   // Update the workspace Email Settings
@@ -163,7 +174,10 @@ const saveChanges = () => {
       data: {
         host: emailSettingsForm?.host,
         port: emailSettingsForm?.port,
-        encryption: emailSettingsForm?.encryption === 'none' ? null : emailSettingsForm?.encryption,
+        encryption:
+          emailSettingsForm?.encryption === "none"
+            ? null
+            : emailSettingsForm?.encryption,
         username: emailSettingsForm?.username,
         password: emailSettingsForm?.password,
         sender_address: emailSettingsForm?.sender_address,
@@ -171,21 +185,26 @@ const saveChanges = () => {
     })
     .then((_data) => {
       // Cache is updated automatically by TanStack Query mutations
-      alert.success("Email settings saved.")
+      alert.success("Email settings saved.");
     })
     .catch((error) => {
-      alert.error("Failed to update email settings: " + error.response.data.message)
-    })
-}
+      alert.error(
+        "Failed to update email settings: " + error.response.data.message,
+      );
+    });
+};
 
 const initEmailSettings = () => {
-  if (!workspace || !workspace.value.settings.email_settings) return
-  const emailSettings = workspace.value?.settings?.email_settings
-  emailSettingsForm.host = emailSettings?.host
-  emailSettingsForm.port = emailSettings?.port
-  emailSettingsForm.encryption = emailSettings?.encryption === null ? 'none' : (emailSettings?.encryption || 'tls')
-  emailSettingsForm.username = emailSettings?.username
-  emailSettingsForm.password = emailSettings?.password
-  emailSettingsForm.sender_address = emailSettings?.sender_address
-}
-</script> 
+  if (!workspace || !workspace.value.settings.email_settings) return;
+  const emailSettings = workspace.value?.settings?.email_settings;
+  emailSettingsForm.host = emailSettings?.host;
+  emailSettingsForm.port = emailSettings?.port;
+  emailSettingsForm.encryption =
+    emailSettings?.encryption === null
+      ? "none"
+      : emailSettings?.encryption || "tls";
+  emailSettingsForm.username = emailSettings?.username;
+  emailSettingsForm.password = emailSettings?.password;
+  emailSettingsForm.sender_address = emailSettings?.sender_address;
+};
+</script>

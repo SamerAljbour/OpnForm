@@ -8,14 +8,22 @@
       :modal="false"
       :portal="portal"
     >
-      <slot :loading="deleteFormMutation.isPending.value || duplicateFormMutation.isPending.value">
-      <UButton
-        color="neutral"
-        variant="outline"
-        icon="i-heroicons-ellipsis-horizontal"
-        size="md"
-        :loading="deleteFormMutation.isPending.value || duplicateFormMutation.isPending.value"
-      />
+      <slot
+        :loading="
+          deleteFormMutation.isPending.value ||
+          duplicateFormMutation.isPending.value
+        "
+      >
+        <UButton
+          color="neutral"
+          variant="outline"
+          icon="i-heroicons-ellipsis-horizontal"
+          size="md"
+          :loading="
+            deleteFormMutation.isPending.value ||
+            duplicateFormMutation.isPending.value
+          "
+        />
       </slot>
     </UDropdownMenu>
 
@@ -27,8 +35,8 @@
     >
       <template #body>
         <p>
-          If you want to permanently delete this form and all of its data, you
-          can do so below.
+          إذا كنت تريد حذف هذا النموذج وكل بياناته بشكل نهائي، يمكنك القيام بذلك
+          أدناه.
         </p>
       </template>
 
@@ -38,13 +46,13 @@
             color="neutral"
             variant="outline"
             @click="showDeleteFormModal = false"
-            label="Cancel"
+            label="إلغاء"
           />
           <UButton
             color="error"
             :loading="deleteFormMutation.isPending.value"
             @click="deleteForm"
-            label="Yes, delete it"
+            label="نعم، احذفه"
           />
         </div>
       </template>
@@ -65,129 +73,153 @@
 </template>
 
 <script setup>
-import { ref, defineProps, computed } from "vue"
-import FormTemplateModal from "../../../open/forms/components/templates/FormTemplateModal.vue"
-import FormWorkspaceModal from "../../../open/forms/components/FormWorkspaceModal.vue"
+import { ref, defineProps, computed } from "vue";
+import FormTemplateModal from "../../../open/forms/components/templates/FormTemplateModal.vue";
+import FormWorkspaceModal from "../../../open/forms/components/FormWorkspaceModal.vue";
 
-const { copy } = useClipboard()
-const router = useRouter()
+const { copy } = useClipboard();
+const router = useRouter();
 
 const props = defineProps({
   form: { type: Object, required: true },
   isMainPage: { type: Boolean, required: false, default: false },
-  content: { 
-    type: Object, 
-    required: false, 
-    default: () => ({side: 'bottom', align: 'end'}) 
+  content: {
+    type: Object,
+    required: false,
+    default: () => ({ side: "bottom", align: "end" }),
   },
-  portal: { type: [Boolean, String], required: false, default: false }
-})
+  portal: { type: [Boolean, String], required: false, default: false },
+});
 
-const { data: user } = useAuth().user()
-const { current: workspace } = useCurrentWorkspace()
+const { data: user } = useAuth().user();
+const { current: workspace } = useCurrentWorkspace();
 
-const { remove, duplicate } = useForms()
+const { remove, duplicate } = useForms();
 
-const showDeleteFormModal = ref(false)
-const showFormTemplateModal = ref(false)
-const showFormWorkspaceModal = ref(false)
+const showDeleteFormModal = ref(false);
+const showFormTemplateModal = ref(false);
+const showFormWorkspaceModal = ref(false);
 
-const deleteFormMutation = remove()
-const duplicateFormMutation = duplicate()
+const deleteFormMutation = remove();
+const duplicateFormMutation = duplicate();
 
 const items = computed(() => {
   return [
     [
-      ...props.isMainPage ? [{
-        label: 'Open form',
-        icon: 'i-heroicons-arrow-top-right-on-square',
-        onClick: () => {
-          if (props.isMainPage && props.form.visibility === 'draft') {
-            showDraftFormWarningNotification()
-          } else {
-            window.open(props.form.share_url, '_blank')
-          }
-        }
-      }] : [],
+      ...(props.isMainPage
+        ? [
+            {
+              label: "فتح النموذج",
+              icon: "i-heroicons-arrow-top-right-on-square",
+              onClick: () => {
+                if (props.isMainPage && props.form.visibility === "draft") {
+                  showDraftFormWarningNotification();
+                } else {
+                  window.open(props.form.share_url, "_blank");
+                }
+              },
+            },
+          ]
+        : []),
       {
-        label: 'Copy link to share',
-        icon: 'i-heroicons-clipboard-document-check-20-solid',
-        onClick: copyLink
-      }
-    ],
-    ...workspace.value?.is_readonly ? [] : [
-      [
-        ...props.isMainPage ? [{
-        label: 'Edit',
-        icon: 'i-heroicons-pencil-square-20-solid',
-        to: { name: 'forms-slug-edit', params: { slug: props.form.slug } }
-      }] : [],
-      {
-        label: 'Duplicate form',
-        icon: 'i-heroicons-document-duplicate-20-solid',
-        onClick: duplicateForm
-        
-      }], 
-    [
-      ...props.isMainPage ? [] : [{
-        label: 'Create Template',
-        icon: 'i-heroicons-document-plus-20-solid',
-        onClick: () => {
-          showFormTemplateModal.value = true
-        }
-      }],
-      {
-        label: 'Change workspace',
-        icon: 'i-heroicons-building-office-2-20-solid',
-        onClick: () => {
-          showFormWorkspaceModal.value = true
-        }
+        label: "نسخ الرابط للمشاركة",
+        icon: "i-heroicons-clipboard-document-check-20-solid",
+        onClick: copyLink,
       },
-    ],[
-      {
-        label: 'Delete form',
-        icon: 'i-heroicons-trash-20-solid',
-        onClick: () => {
-          showDeleteFormModal.value = true
-        },
-        class: 'text-red-800 hover:bg-red-50 hover:text-red-600 group',
-        iconClass: 'text-red-900 group-hover:text-red-800'
-      }
-      ]
-    ]
-  ].filter((group) => group.length > 0)
-})
+    ],
+    ...(workspace.value?.is_readonly
+      ? []
+      : [
+          [
+            ...(props.isMainPage
+              ? [
+                  {
+                    label: "تعديل",
+                    icon: "i-heroicons-pencil-square-20-solid",
+                    to: {
+                      name: "forms-slug-edit",
+                      params: { slug: props.form.slug },
+                    },
+                  },
+                ]
+              : []),
+            {
+              label: "تكرار النموذج",
+              icon: "i-heroicons-document-duplicate-20-solid",
+              onClick: duplicateForm,
+            },
+          ],
+          [
+            ...(props.isMainPage
+              ? []
+              : [
+                  {
+                    label: "إنشاء قالب",
+                    icon: "i-heroicons-document-plus-20-solid",
+                    onClick: () => {
+                      showFormTemplateModal.value = true;
+                    },
+                  },
+                ]),
+            {
+              label: "تغيير مساحة العمل",
+              icon: "i-heroicons-building-office-2-20-solid",
+              onClick: () => {
+                showFormWorkspaceModal.value = true;
+              },
+            },
+          ],
+          [
+            {
+              label: "حذف النموذج",
+              icon: "i-heroicons-trash-20-solid",
+              onClick: () => {
+                showDeleteFormModal.value = true;
+              },
+              class: "text-red-800 hover:bg-red-50 hover:text-red-600 group",
+              iconClass: "text-red-900 group-hover:text-red-800",
+            },
+          ],
+        ]),
+  ].filter((group) => group.length > 0);
+});
 
 const copyLink = () => {
-  copy(props.form.share_url)
-  useAlert().success("Copied!")
-}
+  copy(props.form.share_url);
+  useAlert().success("Copied!");
+};
 
 const duplicateForm = () => {
-  duplicateFormMutation.mutateAsync(props.form.id).then((data) => {
-    router.push({
-      name: "forms-slug-show",
-      params: { slug: data.new_form.slug },
+  duplicateFormMutation
+    .mutateAsync(props.form.id)
+    .then((data) => {
+      router.push({
+        name: "forms-slug-show",
+        params: { slug: data.new_form.slug },
+      });
+      useAlert().success(data.message);
     })
-    useAlert().success(data.message)
-  }).catch((error) => {
-    useAlert().error(error.data?.message || "Failed to duplicate form")
-  })
-}
+    .catch((error) => {
+      useAlert().error(error.data?.message || "فشل تكرار النموذج");
+    });
+};
 
 const deleteForm = () => {
-  deleteFormMutation.mutateAsync(props.form.id).then((data) => {
-    useAlert().success(data.message)
-    showDeleteFormModal.value = false
-    router.push({ name: "home" })
-  }).catch((error) => {
-    useAlert().error(error.data?.message || "Failed to delete form")
-  })
-}
+  deleteFormMutation
+    .mutateAsync(props.form.id)
+    .then((data) => {
+      useAlert().success(data.message);
+      showDeleteFormModal.value = false;
+      router.push({ name: "home" });
+    })
+    .catch((error) => {
+      useAlert().error(error.data?.message || "فشل حذف النموذج.");
+    });
+};
 
 const showDraftFormWarningNotification = () => {
   useAlert().warning(
-    "This form is currently in Draft mode and is not publicly accessible, You can change the form status on the edit form page.",
-  )
-}
+    "هذا النموذج حالياً في وضع المسودة ولا يمكن الوصول إليه بشكل عام. يمكنك تغيير حالة النموذج من صفحة تحرير النموذج.",
+  );
+};
 </script>

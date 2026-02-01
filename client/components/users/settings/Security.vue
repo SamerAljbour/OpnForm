@@ -3,58 +3,52 @@
     <!-- Password Section -->
     <div class="space-y-4">
       <div>
-        <h3 class="text-lg font-medium text-neutral-900">Change Password</h3>
+        <h3 class="text-lg font-medium text-neutral-900">تغيير كلمة المرور</h3>
         <p class="text-sm text-neutral-500 mt-1">
-          Update your password to keep your account secure.
+          حدّث كلمة المرور الخاصة بك للحفاظ على أمان حسابك.
         </p>
       </div>
 
       <VForm size="sm">
-        <form
-          @submit.prevent="updatePassword"
-        >
+        <form @submit.prevent="updatePassword">
           <div class="max-w-sm">
             <TextInput
               :form="passwordForm"
               name="current_password"
-              label="Current Password"
+              label="كلمة المرور الحالية"
               native-type="password"
-              placeholder="Enter current password"
+              placeholder="أدخل كلمة المرور الحالية"
               :required="true"
             />
 
             <TextInput
               :form="passwordForm"
               name="password"
-              label="New Password"
+              label="كلمة المرور الجديدة"
               native-type="password"
-              placeholder="Enter new password"
+              placeholder="أدخل كلمة المرور الجديدة"
               :required="true"
               @focus="isPasswordFocused = true"
               @blur="isPasswordFocused = false"
             />
-            <PasswordStrengthIndicator 
-              v-show="isPasswordFocused" 
-              :password="passwordForm.password" 
+            <PasswordStrengthIndicator
+              v-show="isPasswordFocused"
+              :password="passwordForm.password"
             />
-            
+
             <TextInput
               :form="passwordForm"
               name="password_confirmation"
-              label="Confirm Password"
+              label="تأكيد كلمة المرور"
               native-type="password"
-              placeholder="Confirm new password"
+              placeholder="أكد كلمة المرور الجديدة"
               :required="true"
             />
           </div>
 
           <div class="mt-4">
-            <UButton
-              type="submit"
-              :loading="passwordForm.busy"
-              color="primary"
-            >
-              Update Password
+            <UButton type="submit" :loading="passwordForm.busy" color="primary">
+              تحديث كلمة المرور
             </UButton>
           </div>
         </form>
@@ -68,28 +62,28 @@
 </template>
 
 <script setup>
-const alert = useAlert()
+const alert = useAlert();
 
 // Password form
 const passwordForm = useForm({
-  current_password: '',
-  password: '',
-  password_confirmation: ''
-})
+  current_password: "",
+  password: "",
+  password_confirmation: "",
+});
 
 // Password field focus state
-const isPasswordFocused = ref(false)
+const isPasswordFocused = ref(false);
 
 // Update password
 const updatePassword = () => {
   passwordForm
-    .patch('/settings/password')
+    .patch("/settings/password")
     .then(() => {
-      passwordForm.reset()
-      alert.success('Password updated.')
+      passwordForm.reset();
+      alert.success("Password updated.");
     })
     .catch((error) => {
-      console.error(error)
-    })
-}
-</script> 
+      console.error(error);
+    });
+};
+</script>

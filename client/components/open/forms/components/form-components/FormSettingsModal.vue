@@ -6,7 +6,7 @@
   >
     <SettingsModalPage
       id="general"
-      label="General"
+      label="عام"
       icon="i-heroicons-information-circle"
     >
       <FormInformation />
@@ -14,7 +14,7 @@
 
     <SettingsModalPage
       id="submission"
-      label="Submission Settings"
+      label="إعدادات التقديم"
       icon="i-heroicons-paper-airplane"
     >
       <FormSubmissionSettings />
@@ -22,7 +22,7 @@
 
     <SettingsModalPage
       id="security"
-      label="Security & Access"
+      label="الأمان والوصول"
       icon="i-heroicons-shield-check"
     >
       <FormSecurityAccess />
@@ -36,62 +36,61 @@
       <FormCustomSeo />
     </SettingsModalPage>
 
-    <SettingsModalPage
+    <!-- <SettingsModalPage
       id="custom-code"
       label="Custom Code"
       icon="i-heroicons-code-bracket"
     >
       <FormCustomCode />
-    </SettingsModalPage>
-
+    </SettingsModalPage> -->
   </SettingsModal>
 </template>
 
 <script setup>
-import SettingsModal from '~/components/pages/settings/SettingsModal.vue'
-import SettingsModalPage from '~/components/pages/settings/SettingsModalPage.vue'
-import FormInformation from '~/components/open/forms/components/form-components/FormInformation.vue'
-import FormSubmissionSettings from '~/components/open/forms/components/form-components/FormSubmissionSettings.vue'
-import FormSecurityAccess from '~/components/open/forms/components/form-components/FormSecurityAccess.vue'
-import FormCustomSeo from '~/components/open/forms/components/form-components/FormCustomSeo.vue'
-import FormCustomCode from '~/components/open/forms/components/form-components/FormCustomCode.vue'
+import SettingsModal from "~/components/pages/settings/SettingsModal.vue";
+import SettingsModalPage from "~/components/pages/settings/SettingsModalPage.vue";
+import FormInformation from "~/components/open/forms/components/form-components/FormInformation.vue";
+import FormSubmissionSettings from "~/components/open/forms/components/form-components/FormSubmissionSettings.vue";
+import FormSecurityAccess from "~/components/open/forms/components/form-components/FormSecurityAccess.vue";
+import FormCustomSeo from "~/components/open/forms/components/form-components/FormCustomSeo.vue";
+import FormCustomCode from "~/components/open/forms/components/form-components/FormCustomCode.vue";
 
-const emit = defineEmits(['close', 'update:activeTab'])
+const emit = defineEmits(["close", "update:activeTab"]);
 
 const props = defineProps({
   modelValue: {
     type: Boolean,
-    default: false
+    default: false,
   },
   activeTab: {
     type: String,
-    default: 'general'
-  }
-})
+    default: "general",
+  },
+});
 
 // Modal state
 const isOpen = computed({
   get: () => props.modelValue,
-  set: (value) => emit('close', value)
-})
+  set: (value) => emit("close", value),
+});
 
 // Active tab state
 const activeTab = computed({
   get: () => props.activeTab,
-  set: (value) => emit('update:activeTab', value)
-})
+  set: (value) => emit("update:activeTab", value),
+});
 
 // Methods
 const closeModal = () => {
-  isOpen.value = false
-}
+  isOpen.value = false;
+};
 
 // Define keyboard shortcuts
 defineShortcuts({
   escape: {
     handler: () => {
-      closeModal()
-    }
-  }
-})
-</script> 
+      closeModal();
+    },
+  },
+});
+</script>

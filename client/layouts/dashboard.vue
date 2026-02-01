@@ -2,9 +2,9 @@
   <div class="dashboard-layout min-h-screen bg-neutral-50">
     <!-- Sidebar -->
     <AppSidebar />
-    
+
     <!-- Main content area -->
-    <main class="sm:pl-58">
+    <main class="flex-1 sm:pr-58 rtl-only:sm:pl-0 rtl-only:sm:pr-58">
       <!-- Content wrapper with proper spacing -->
       <div class="min-h-screen bg-white">
         <slot />
@@ -14,11 +14,11 @@
 </template>
 
 <script setup>
-import AppSidebar from "~/components/layouts/AppSidebar.vue"
+import AppSidebar from "~/components/layouts/AppSidebar.vue";
 </script>
 
 <style scoped>
 .dashboard-layout {
   /* Ensure proper layout structure */
 }
-</style> 
+</style>

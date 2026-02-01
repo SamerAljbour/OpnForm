@@ -8,14 +8,14 @@
     ]"
   >
     <!-- Top Section - Only show if there's header content or on mobile -->
-    <div 
+    <div
       v-if="hasHeaderContent || isMobileMenuOpen"
       class="p-1 border-b border-neutral-200 h-[49px]"
     >
       <div class="flex items-center justify-between gap-1 w-full">
         <!-- Header Content Slot -->
         <slot name="header" :isMobileMenuOpen="isMobileMenuOpen" />
-        
+
         <div class="grow" v-if="hasMobileHeaderContent">
           <slot name="mobile-header" :isMobileMenuOpen="isMobileMenuOpen" />
         </div>
@@ -26,7 +26,9 @@
             square
             size="xl"
             class="hover:bg-neutral-200/80"
-            :icon="isMobileMenuOpen ? 'i-heroicons-x-mark' : 'i-heroicons-bars-3'"
+            :icon="
+              isMobileMenuOpen ? 'i-heroicons-x-mark' : 'i-heroicons-bars-3'
+            "
             variant="ghost"
             color="neutral"
             @click="isMobileMenuOpen = !isMobileMenuOpen"
@@ -34,9 +36,9 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Mobile Menu Toggle (when header is hidden on desktop) -->
-    <div 
+    <div
       v-else
       class="sm:hidden p-1 border-b border-neutral-200 h-[49px] flex items-center justify-start gap-2"
     >
@@ -55,21 +57,25 @@
     </div>
 
     <!-- Navigation Content -->
-    <nav 
+    <nav
       class="flex-1 p-2 overflow-y-auto flex flex-col"
-      :class="{ 'hidden': !isMobileMenuOpen, 'sm:flex': true }"
+      :class="{ hidden: !isMobileMenuOpen, 'sm:flex': true }"
     >
       <slot name="navigation" :isMobileMenuOpen="isMobileMenuOpen" />
     </nav>
 
     <!-- Footer -->
-    <div 
+    <div
       class="p-2 border-t border-neutral-200"
-      :class="{ 'hidden': !isMobileMenuOpen, 'sm:block': true }"
+      :class="{ hidden: !isMobileMenuOpen, 'sm:block': true }"
     >
       <slot name="footer" :isMobileMenuOpen="isMobileMenuOpen">
         <p class="text-xs text-neutral-400 text-center">
-          <span class="font-bold"><NuxtLink class="text-neutral-400" :to="{ name: 'home' }">OpnForm</NuxtLink></span>
+          <span class="font-bold"
+            ><NuxtLink class="text-neutral-400" :to="{ name: 'home' }"
+              >دائرة قاضي القضاة</NuxtLink
+            ></span
+          >
           <span class="text-neutral-500" v-if="version"> v{{ version }}</span>
         </p>
       </slot>
@@ -78,35 +84,35 @@
 </template>
 
 <script setup>
-const slots = useSlots()
+const slots = useSlots();
 
-const isMobileMenuOpen = ref(false)
-const version = computed(() => useFeatureFlag('version'))
+const isMobileMenuOpen = ref(false);
+const version = computed(() => useFeatureFlag("version"));
 
 // Check if header slot has content
 const hasHeaderContent = computed(() => {
-  return !!(slots.header && slots.header().length > 0)
-})
+  return !!(slots.header && slots.header().length > 0);
+});
 
 const hasMobileHeaderContent = computed(() => {
-  return !!(slots['mobile-header'] && slots['mobile-header']().length > 0)
-})
+  return !!(slots["mobile-header"] && slots["mobile-header"]().length > 0);
+});
 
 // Handle body overflow when mobile menu is open
 watchEffect(() => {
   if (import.meta.client) {
-    document.body.classList.toggle('overflow-hidden', isMobileMenuOpen.value)
+    document.body.classList.toggle("overflow-hidden", isMobileMenuOpen.value);
   }
-})
+});
 
 onUnmounted(() => {
   if (import.meta.client) {
-    document.body.classList.remove('overflow-hidden')
+    document.body.classList.remove("overflow-hidden");
   }
-})
+});
 
 // Expose the mobile menu state to parent components
 defineExpose({
-  isMobileMenuOpen
-})
-</script> 
+  isMobileMenuOpen,
+});
+</script>

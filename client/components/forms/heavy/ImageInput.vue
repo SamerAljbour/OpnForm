@@ -19,24 +19,12 @@
           v-if="currentUrl == null"
           class="text-neutral-600 dark:text-neutral-400 flex justify-center"
         >
-          <Icon
-            name="heroicons:cloud-arrow-up"
-            class="h-5 w-5"
-          />
-          <span class="ml-2">
-            Upload
-          </span>
-
+          <Icon name="heroicons:cloud-arrow-up" class="h-5 w-5" />
+          <span class="ml-2"> رفع الملفات </span>
         </div>
-        <div
-          v-else
-          class=" text-neutral-600 dark:text-neutral-400 flex"
-        >
+        <div v-else class="text-neutral-600 dark:text-neutral-400 flex">
           <div class="flex-grow">
-            <img
-              :src="currentUrl"
-              class="h-5 rounded-sm shadow-sm border"
-            >
+            <img :src="currentUrl" class="h-5 rounded-sm shadow-sm border" />
           </div>
           <slot name="left-action" />
           <a
@@ -44,10 +32,7 @@
             class="text-neutral-500 hover:text-red-500 flex items-center"
             @click.stop.prevent="clearUrl"
           >
-            <Icon
-              name="heroicons:trash"
-              class="h-5 w-5"
-            />
+            <Icon name="heroicons:trash" class="h-5 w-5" />
           </a>
         </div>
       </button>
@@ -76,7 +61,10 @@
             class="mb-2"
           />
 
-          <div v-if="activeTab === 'upload'" class="sm:grid sm:grid-cols-1 sm:gap-4 sm:items-start">
+          <div
+            v-if="activeTab === 'upload'"
+            class="sm:grid sm:grid-cols-1 sm:gap-4 sm:items-start"
+          >
             <div class="sm:col-span-2 mb-5 mt-2">
               <div
                 v-cloak
@@ -89,9 +77,7 @@
                   class="text-neutral-600 dark:text-neutral-400"
                 >
                   <loader class="h-5 w-5 mx-auto m-10" />
-                  <p class="text-center mt-6">
-                    Uploading your file...
-                  </p>
+                  <p class="text-center mt-6">Uploading your file...</p>
                 </div>
                 <template v-else>
                   <div
@@ -109,7 +95,7 @@
                       :name="name"
                       accept="image/png, image/gif, image/jpeg, image/bmp, image/svg+xml"
                       @change="manualFileUpload"
-                    >
+                    />
                     <Icon
                       name="heroicons:cloud-arrow-up"
                       class="x-auto h-24 w-24 text-neutral-200"
@@ -157,14 +143,14 @@
 </template>
 
 <script>
-import { inputProps, useFormInput } from "../useFormInput.js"
-import { storeFile } from "~/lib/file-uploads.js"
-import { formsApi } from '~/api'
-import { imageInputTheme } from '~/lib/forms/themes/image-input.theme.js'
-import { useFeatureFlag } from '~/composables/useFeatureFlag.js'
+import { inputProps, useFormInput } from "../useFormInput.js";
+import { storeFile } from "~/lib/file-uploads.js";
+import { formsApi } from "~/api";
+import { imageInputTheme } from "~/lib/forms/themes/image-input.theme.js";
+import { useFeatureFlag } from "~/composables/useFeatureFlag.js";
 
 export default {
-  components: {  },
+  components: {},
   mixins: [],
   props: {
     ...inputProps,
@@ -172,18 +158,18 @@ export default {
 
   setup(props, context) {
     const formInput = useFormInput(props, context, {
-      variants: imageInputTheme
-    })
+      variants: imageInputTheme,
+    });
     return {
       ...formInput,
-      props
-    }
+      props,
+    };
   },
 
   data: () => ({
     showUploadModal: false,
-    activeTab: 'upload',
-    urlInput: '',
+    activeTab: "upload",
+    urlInput: "",
 
     file: [],
     uploadDragoverTracking: false,
@@ -193,27 +179,27 @@ export default {
 
   computed: {
     currentUrl() {
-      return this.compVal
+      return this.compVal;
     },
     tabItems() {
       const baseTabs = [
-        { label: 'Upload', value: 'upload' },
-        { label: 'URL', value: 'url' },
-      ]
-      if (useFeatureFlag('services.unsplash')) {
-        baseTabs.splice(1, 0, { label: 'Unsplash', value: 'unsplash' })
+        { label: "Upload", value: "upload" },
+        { label: "URL", value: "url" },
+      ];
+      if (useFeatureFlag("services.unsplash")) {
+        baseTabs.splice(1, 0, { label: "Unsplash", value: "unsplash" });
       }
-      return baseTabs
+      return baseTabs;
     },
   },
 
   watch: {
     showUploadModal: {
       handler() {
-        if (import.meta.server) return
-        document.removeEventListener("paste", this.onUploadPasteEvent)
+        if (import.meta.server) return;
+        document.removeEventListener("paste", this.onUploadPasteEvent);
         if (this.showUploadModal) {
-          document.addEventListener("paste", this.onUploadPasteEvent)
+          document.addEventListener("paste", this.onUploadPasteEvent);
         }
       },
     },
@@ -221,75 +207,80 @@ export default {
 
   methods: {
     clearUrl() {
-      this.compVal = null
+      this.compVal = null;
     },
     onUploadDragoverEvent() {
-      this.uploadDragoverEvent = true
-      this.uploadDragoverTracking = true
+      this.uploadDragoverEvent = true;
+      this.uploadDragoverTracking = true;
     },
     onUploadDropEvent(e) {
-      this.uploadDragoverEvent = false
-      this.uploadDragoverTracking = false
-      this.droppedFiles(e.dataTransfer.files)
+      this.uploadDragoverEvent = false;
+      this.uploadDragoverTracking = false;
+      this.droppedFiles(e.dataTransfer.files);
     },
     onUploadPasteEvent(e) {
-      if (!this.showUploadModal || this.activeTab !== 'upload') return
-      this.uploadDragoverEvent = false
-      this.uploadDragoverTracking = false
-      this.droppedFiles(e.clipboardData.files)
+      if (!this.showUploadModal || this.activeTab !== "upload") return;
+      this.uploadDragoverEvent = false;
+      this.uploadDragoverTracking = false;
+      this.droppedFiles(e.clipboardData.files);
     },
     selectUnsplashImage(imageUrl) {
-      this.compVal = imageUrl
-      this.showUploadModal = false
+      this.compVal = imageUrl;
+      this.showUploadModal = false;
     },
     insertUrl() {
-      if (!this.urlInput || !/^https?:\/\/[^\s$.?#].[^\s]*$/i.test(this.urlInput)) return
-      this.compVal = this.urlInput
-      this.urlInput = ''
-      this.showUploadModal = false
+      if (
+        !this.urlInput ||
+        !/^https?:\/\/[^\s$.?#].[^\s]*$/i.test(this.urlInput)
+      )
+        return;
+      this.compVal = this.urlInput;
+      this.urlInput = "";
+      this.showUploadModal = false;
     },
     droppedFiles(droppedFiles) {
-      if (!droppedFiles) return
+      if (!droppedFiles) return;
 
-      this.file = droppedFiles[0]
-      this.uploadFileToServer()
+      this.file = droppedFiles[0];
+      this.uploadFileToServer();
     },
     openFileUpload() {
-      this.$refs["actual-input"].click()
+      this.$refs["actual-input"].click();
     },
     manualFileUpload(e) {
-      this.file = e.target.files[0]
-      this.uploadFileToServer()
+      this.file = e.target.files[0];
+      this.uploadFileToServer();
     },
     uploadFileToServer() {
-      this.loading = true
+      this.loading = true;
       // Store file in s3
       storeFile(this.file)
         .then((response) => {
           // Move file to permanent storage for form assets
-          formsApi.assets.upload({
-            url:
-              this.file.name.split(".").slice(0, -1).join(".") +
-              "_" +
-              response.uuid +
-              "." +
-              response.extension,
-          })
+          formsApi.assets
+            .upload({
+              url:
+                this.file.name.split(".").slice(0, -1).join(".") +
+                "_" +
+                response.uuid +
+                "." +
+                response.extension,
+            })
             .then((moveFileResponseData) => {
-              this.compVal = moveFileResponseData.url
+              this.compVal = moveFileResponseData.url;
             })
             .catch(() => {
-              this.compVal = null
-            })
+              this.compVal = null;
+            });
         })
         .catch(() => {
-          this.compVal = null
+          this.compVal = null;
         })
         .finally(() => {
-          this.showUploadModal = false
-          this.loading = false
-        })
+          this.showUploadModal = false;
+          this.loading = false;
+        });
     },
   },
-}
+};
 </script>

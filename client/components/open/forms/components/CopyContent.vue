@@ -3,7 +3,9 @@
     <div
       class="flex-1 truncate sm:w-auto border border-neutral-300 rounded-md px-2 py-1 flex-grow select-all bg-neutral-100 relative"
     >
-      <div class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-r from-transparent to-neutral-100"></div>
+      <div
+        class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-r from-transparent to-neutral-100"
+      ></div>
       <p class="select-all text-neutral-900 text-sm">
         {{ content }}
       </p>
@@ -16,31 +18,39 @@
       >
         <UButton
           :color="copySuccess ? 'success' : 'primary'"
-          :icon="copySuccess ? 'i-heroicons-check' : 'i-heroicons-clipboard-document'"
+          :icon="
+            copySuccess ? 'i-heroicons-check' : 'i-heroicons-clipboard-document'
+          "
           class="w-full"
           @click.prevent="copyToClipboard"
         >
-          <span class="hidden md:inline">{{ copySuccess ? 'Copied!' : label }}</span>
+          <span class="hidden md:inline">{{
+            copySuccess ? "Copied!" : label
+          }}</span>
         </UButton>
       </TrackClick>
       <UButton
         v-else
         :color="copySuccess ? 'success' : 'primary'"
-        :icon="copySuccess ? 'i-heroicons-check' : 'i-heroicons-clipboard-document'"
+        :icon="
+          copySuccess ? 'i-heroicons-check' : 'i-heroicons-clipboard-document'
+        "
         class="w-full"
         @click.prevent="copyToClipboard"
       >
-        <span class="hidden md:inline">{{ copySuccess ? 'Copied!' : label }}</span>
+        <span class="hidden md:inline">{{
+          copySuccess ? "Copied!" : label
+        }}</span>
       </UButton>
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps, ref } from "vue"
-import TrackClick from '~/components/global/TrackClick.vue'
+import { defineProps, ref } from "vue";
+import TrackClick from "~/components/global/TrackClick.vue";
 
-const { copy } = useClipboard()
+const { copy } = useClipboard();
 
 const props = defineProps({
   content: {
@@ -53,7 +63,7 @@ const props = defineProps({
   },
   label: {
     type: String,
-    default: "Copy Link",
+    default: "نسخ الرابط",
   },
   trackingEvent: {
     type: String,
@@ -63,21 +73,21 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
-})
+});
 
-const copySuccess = ref(false)
+const copySuccess = ref(false);
 
 const copyToClipboard = () => {
-  if (import.meta.server) return
-  
-  copy(props.content)
-  
+  if (import.meta.server) return;
+
+  copy(props.content);
+
   // Show success state
-  copySuccess.value = true
-  
+  copySuccess.value = true;
+
   // Reset after 2 seconds
   setTimeout(() => {
-    copySuccess.value = false
-  }, 2000)
-}
+    copySuccess.value = false;
+  }, 2000);
+};
 </script>

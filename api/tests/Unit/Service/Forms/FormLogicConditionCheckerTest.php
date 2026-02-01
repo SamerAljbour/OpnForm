@@ -522,7 +522,7 @@ describe('FormLogicConditionChecker', function () {
                 'operatorIdentifier' => 'invalid',
                 'children' => []
             ];
-            expect(fn () => FormLogicConditionChecker::conditionsMet($condition, []))->toThrow(\Exception::class);
+            expect(fn() => FormLogicConditionChecker::conditionsMet($condition, []))->toThrow(\Exception::class);
         });
     });
 });

@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="logic"
-    :key="resetKey"
-  >
+  <div v-if="logic" :key="resetKey">
     <div class="flex gap-1 border-b pb-2">
       <UButton
         color="neutral"
@@ -12,7 +9,7 @@
         class="text-neutral-500"
         @click="showCopyFormModal = true"
       >
-        Copy from
+        نسخ من
       </UButton>
       <UButton
         color="neutral"
@@ -22,7 +19,7 @@
         class="text-neutral-500"
         @click="showCopyToModal = true"
       >
-        Copy to
+        نسخ إلى
       </UButton>
       <UButton
         color="neutral"
@@ -32,7 +29,7 @@
         class="text-neutral-500"
         @click="clearAll"
       >
-        Clear
+        مسح
       </UButton>
       <UButton
         color="neutral"
@@ -46,30 +43,42 @@
 
     <!-- Conditions Card -->
     <div class="mt-4">
-      <p class="text-xs font-medium text-gray-600 mb-2">When following condition(s) are true</p>
-      <div class="p-3 border border-gray-200 rounded-lg bg-gray-50/50 hover:bg-gray-50 transition-colors">
-      <UPopover
-        :content="{ 
-          align: 'start', 
-          side: 'left', 
-          sideOffset: 8 
-        }"
-        :ui="{ 
-          content: 'w-[650px] overflow-hidden' 
-        }"
-        arrow
+      <p class="text-xs font-medium text-gray-600 mb-2">
+        عندما تتحقق الشرط (الشروط) التالية
+      </p>
+      <div
+        class="p-3 border border-gray-200 rounded-lg bg-gray-50/50 hover:bg-gray-50 transition-colors"
       >
-        <UButton
-          :color="hasConditions ? 'primary' : 'neutral'"
-          :variant="hasConditions ? 'subtle' : 'outline'"
-          :icon="hasConditions ? 'i-heroicons-cog-8-tooth-16-solid' : 'i-heroicons-plus'"
-          size="sm"
-          class="w-full justify-start font-medium hover:bg-white transition-colors"
+        <UPopover
+          :content="{
+            align: 'start',
+            side: 'left',
+            sideOffset: 8,
+          }"
+          :ui="{
+            content: 'w-[650px] overflow-hidden',
+          }"
+          arrow
         >
-          {{ hasConditions ? `${conditionsCount} rule${conditionsCount > 1 ? 's' : ''}` : 'Add rule' }}
-        </UButton>
+          <UButton
+            :color="hasConditions ? 'primary' : 'neutral'"
+            :variant="hasConditions ? 'subtle' : 'outline'"
+            :icon="
+              hasConditions
+                ? 'i-heroicons-cog-8-tooth-16-solid'
+                : 'i-heroicons-plus'
+            "
+            size="sm"
+            class="w-full justify-start font-medium hover:bg-white transition-colors"
+          >
+            {{
+              hasConditions
+                ? `${conditionsCount} rule${conditionsCount > 1 ? "s" : ""}`
+                : "إضافة قاعدة"
+            }}
+          </UButton>
 
-        <template #content>
+          <template #content>
             <ScrollableContainer
               ref="scrollableContainer"
               direction="both"
@@ -89,21 +98,28 @@
                 :form="form"
               />
             </ScrollableContainer>
-        </template>
-      </UPopover>
+          </template>
+        </UPopover>
       </div>
     </div>
 
     <!-- Divider Line -->
     <div class="flex items-center my-5">
       <div class="flex-1 border-b"></div>
-      <span class="px-4 py-1 text-xs font-medium text-gray-600 bg-white border rounded-full">then</span>
+      <span
+        class="px-4 py-1 text-xs font-medium text-gray-600 bg-white border rounded-full"
+        >ثم</span
+      >
       <div class="flex-1 border-b"></div>
     </div>
 
     <div>
-      <p class="text-xs font-medium text-gray-600 mb-2">Apply the following action(s)</p>
-      <div class="p-3 border border-gray-200 rounded-lg bg-gray-50/50 hover:bg-gray-50 transition-colors">
+      <p class="text-xs font-medium text-gray-600 mb-2">
+        قم بتطبيق الإجراء (الإجراءات) التالية
+      </p>
+      <div
+        class="p-3 border border-gray-200 rounded-lg bg-gray-50/50 hover:bg-gray-50 transition-colors"
+      >
         <flat-select-input
           :key="resetKey"
           v-model="logic.actions"
@@ -118,20 +134,20 @@
     </div>
 
     <p class="text-neutral-400 text-xs mt-2">
-      Note that hidden fields can never be required.
+      ملاحظة: الحقول المخفية لا يمكن أن تكون مطلوبة أبداً.
     </p>
 
     <UModal
       v-model:open="showCopyFormModal"
-      title="Copy logic from another field"
-      :description="`Select another field/block to copy its logic and apply it to '${field.name}'.`"
+      title="نسخ من منطق حقل آخر"
+      :description="`حدد حقل/خانة أخرى لنسخ منطقها وتطبيقه على '${field.name}'.`"
     >
       <template #body>
         <USelectMenu
           v-model="copyFrom"
           :items="copyFromOptions"
           value-key="value"
-          placeholder="Choose a field/block..."
+          placeholder="اختر حقلاً/خانة..."
           searchable
         />
       </template>
@@ -143,25 +159,21 @@
           label="Close"
           @click="showCopyFormModal = false"
         />
-        <UButton
-          color="primary"
-          @click="copyLogic"
-          label="Confirm & Copy"
-        />
+        <UButton color="primary" @click="copyLogic" label="تأكيد ونسخ" />
       </template>
     </UModal>
 
     <UModal
       v-model:open="showCopyToModal"
-      title="Copy logic to other fields"
-      :description="`Select other fields to copy the logic from '${field.name}' to.`"
+      title="نسخ منطق إلى حقول أخرى"
+      :description="`حدد حقول أخرى لنسخ منطق '${field.name}' إليها.`"
     >
       <template #body>
         <USelectMenu
           v-model="copyTo"
           :items="copyToOptions"
           value-key="value"
-          placeholder="Choose fields..."
+          placeholder="اختر حقول..."
           :multiple="true"
           searchable
         />
@@ -171,13 +183,13 @@
         <UButton
           color="neutral"
           variant="outline"
-          label="Close"
+          label="إغلاق"
           @click="showCopyToModal = false"
         />
         <UButton
           color="primary"
           @click="copyLogicToFields"
-          label="Confirm & Copy"
+          label="تأكيد ونسخ"
         />
       </template>
     </UModal>
@@ -185,10 +197,10 @@
 </template>
 
 <script>
-import ConditionEditor from "./ConditionEditor.client.vue"
-import ScrollableContainer from "~/components/dashboard/ScrollableContainer.vue"
-import clonedeep from "clone-deep"
-import { default as _has } from "lodash/has"
+import ConditionEditor from "./ConditionEditor.client.vue";
+import ScrollableContainer from "~/components/dashboard/ScrollableContainer.vue";
+import clonedeep from "clone-deep";
+import { default as _has } from "lodash/has";
 
 export default {
   name: "FormBlockLogicEditor",
@@ -205,10 +217,10 @@ export default {
   },
 
   setup() {
-    const crisp = useCrisp()
+    const crisp = useCrisp();
     return {
-      crisp
-    }
+      crisp,
+    };
   },
 
   data() {
@@ -222,17 +234,18 @@ export default {
       copyFrom: null,
       showCopyToModal: false,
       copyTo: [],
-    }
+    };
   },
 
   computed: {
     conditionsCount() {
-      if (this.logic.conditions === null || this.logic.conditions === undefined) return 0
+      if (this.logic.conditions === null || this.logic.conditions === undefined)
+        return 0;
       // Count the number of rules/conditions recursively
-      return this.countConditions(this.logic.conditions)
+      return this.countConditions(this.logic.conditions);
     },
     hasConditions() {
-      return this.conditionsCount > 0
+      return this.conditionsCount > 0;
     },
     copyFromOptions() {
       return this.form.properties
@@ -242,20 +255,20 @@ export default {
             _has(field, "logic") &&
             field.logic !== null &&
             Object.keys(field.logic || {}).length > 0
-          )
+          );
         })
         .map((field) => {
-          return { label: field.name, value: field.id }
-        })
+          return { label: field.name, value: field.id };
+        });
     },
     copyToOptions() {
       return this.form.properties
         .filter((field) => {
-          return field.id !== this.field.id
+          return field.id !== this.field.id;
         })
         .map((field) => {
-          return { label: field.name, value: field.id }
-        })
+          return { label: field.name, value: field.id };
+        });
     },
     actionOptions() {
       if (
@@ -269,38 +282,38 @@ export default {
         ].includes(this.field.type)
       ) {
         if (this.field.hidden) {
-          return [{ name: "Show Block", value: "show-block" }]
+          return [{ name: "إظهار الخانة", value: "show-block" }];
         } else {
-          return [{ name: "Hide Block", value: "hide-block" }]
+          return [{ name: "إخفاء الخانة", value: "hide-block" }];
         }
       }
 
       if (this.field.hidden) {
         return [
-          { name: "Show Block", value: "show-block" },
+          { name: "إظهار الخانة", value: "show-block" },
           { name: "Require answer", value: "require-answer" },
-        ]
+        ];
       } else if (this.field.disabled) {
         return [
-          { name: "Enable Block", value: "enable-block" },
+          { name: "تفعيل الخانة", value: "enable-block" },
           this.field.required
-            ? { name: "Make it optional", value: "make-it-optional" }
+            ? { name: "اجعله اختياريًا", value: "make-it-optional" }
             : {
-                name: "Require answer",
+                name: "يتطلب إدخال إجابة",
                 value: "require-answer",
               },
-        ]
+        ];
       } else {
         return [
-          { name: "Hide Block", value: "hide-block" },
-          { name: "Disable Block", value: "disable-block" },
+          { name: "إخفاء الخانة", value: "hide-block" },
+          { name: "تعطيل الخانة", value: "disable-block" },
           this.field.required
-            ? { name: "Make it optional", value: "make-it-optional" }
+            ? { name: "اجعله اختياريًا", value: "make-it-optional" }
             : {
-                name: "Require answer",
+                name: "يتطلب إدخال إجابة",
                 value: "require-answer",
               },
-        ]
+        ];
       }
     },
   },
@@ -308,7 +321,7 @@ export default {
   watch: {
     logic: {
       handler() {
-        this.field.logic = this.logic
+        this.field.logic = this.logic;
       },
       deep: true,
     },
@@ -318,7 +331,7 @@ export default {
         this.logic = this.field.logic || {
           conditions: null,
           actions: [],
-        }
+        };
       },
     },
     "field.required": "cleanConditions",
@@ -328,40 +341,40 @@ export default {
 
   mounted() {
     if (!_has(this.field, "logic")) {
-      this.field.logic = this.logic
+      this.field.logic = this.logic;
     }
   },
 
   methods: {
     countConditions(conditions) {
-      if (!conditions) return 0
-      
+      if (!conditions) return 0;
+
       // If it's a group with children
       if (conditions.children && Array.isArray(conditions.children)) {
         return conditions.children.reduce((count, child) => {
           // If child has an identifier, it's a rule
           if (child.identifier) {
-            return count + 1
+            return count + 1;
           }
           // If child has children, it's a nested group - count recursively
           if (child.children) {
-            return count + this.countConditions(child)
+            return count + this.countConditions(child);
           }
-          return count
-        }, 0)
+          return count;
+        }, 0);
       }
-      
+
       // If it's a single rule with identifier
       if (conditions.identifier) {
-        return 1
+        return 1;
       }
-      
-      return 0
+
+      return 0;
     },
     clearAll() {
-      this.logic.conditions = null
-      this.logic.actions = []
-      this.refreshActions()
+      this.logic.conditions = null;
+      this.logic.actions = [];
+      this.refreshActions();
     },
     onActionInput() {
       if (this.logic.actions.length >= 2) {
@@ -369,57 +382,57 @@ export default {
           this.logic.actions[1] === "require-answer" &&
           this.logic.actions[0] === "hide-block"
         ) {
-          this.logic.actions = ["require-answer"]
+          this.logic.actions = ["require-answer"];
         } else if (
           this.logic.actions[1] === "hide-block" &&
           this.logic.actions[0] === "require-answer"
         ) {
-          this.logic.actions = ["hide-block"]
+          this.logic.actions = ["hide-block"];
         }
-        this.refreshActions()
+        this.refreshActions();
       }
     },
     cleanConditions() {
       const availableActions = this.actionOptions.map(function (op) {
-        return op.value
-      })
+        return op.value;
+      });
       this.logic.actions = availableActions.filter((value) =>
         this.logic.actions.includes(value),
-      )
-      this.refreshActions()
+      );
+      this.refreshActions();
     },
     refreshActions() {
-      this.resetKey++
+      this.resetKey++;
     },
     openHelpArticle() {
-      this.crisp.openHelpdeskArticle('how-do-i-add-logic-to-my-form-1lmguq5')
+      this.crisp.openHelpdeskArticle("how-do-i-add-logic-to-my-form-1lmguq5");
     },
     copyLogic() {
       if (this.copyFrom) {
         const property = this.form.properties.find((property) => {
-          return property.id === this.copyFrom
-        })
+          return property.id === this.copyFrom;
+        });
         if (property && property.logic) {
-          this.logic = clonedeep(property.logic)
-          this.cleanConditions()
+          this.logic = clonedeep(property.logic);
+          this.cleanConditions();
         }
       }
-      this.showCopyFormModal = false
+      this.showCopyFormModal = false;
     },
     copyLogicToFields() {
       if (this.copyTo.length) {
         this.copyTo.forEach((fieldId) => {
           const targetField = this.form.properties.find(
-            (property) => property.id === fieldId
-          )
+            (property) => property.id === fieldId,
+          );
           if (targetField) {
-            targetField.logic = clonedeep(this.logic)
+            targetField.logic = clonedeep(this.logic);
           }
-        })
+        });
       }
-      this.showCopyToModal = false
-      this.copyTo = []
+      this.showCopyToModal = false;
+      this.copyTo = [];
     },
   },
-}
+};
 </script>

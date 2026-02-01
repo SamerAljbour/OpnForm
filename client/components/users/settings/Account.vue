@@ -3,41 +3,37 @@
     <!-- Profile Information Section -->
     <div class="space-y-4">
       <div>
-        <h3 class="text-lg font-medium text-neutral-900">Profile Information</h3>
+        <h3 class="text-lg font-medium text-neutral-900">
+          معلومات الملف الشخصي
+        </h3>
         <p class="text-sm text-neutral-500 mt-1">
-          Update your account profile information and email address.
+          حدّث معلومات ملفك الشخصي وعنوان البريد الإلكتروني.
         </p>
       </div>
 
       <VForm size="sm">
-        <form
-          @submit.prevent="updateProfile"
-        >
+        <form @submit.prevent="updateProfile">
           <div class="max-w-sm">
             <text-input
               :form="profileForm"
               name="name"
-              label="Full Name"
-              placeholder="Enter your full name"
+              label="الاسم الكامل"
+              placeholder="أدخل اسمك الكامل"
               :required="true"
             />
             <text-input
               :form="profileForm"
               name="email"
-              label="Email Address"
+              label="عنوان البريد الإلكتروني"
               type="email"
-              placeholder="Enter your email"
+              placeholder="أدخل بريدك الإلكتروني"
               :required="true"
             />
           </div>
 
           <div class="mt-4">
-            <UButton
-              type="submit"
-              :loading="profileForm.busy"
-              color="primary"
-            >
-              Save Changes
+            <UButton type="submit" :loading="profileForm.busy" color="primary">
+              حفظ التغييرات
             </UButton>
           </div>
         </form>
@@ -47,20 +43,20 @@
     <div class="pt-8 border-t border-neutral-200">
       <div class="flex flex-col gap-2 items-start">
         <div>
-          <h4 class="font-medium text-red-800">Delete Account</h4>
+          <h4 class="font-medium text-red-800">حذف الحساب</h4>
           <p class="mt-1 text-sm text-neutral-500">
-            This will permanently delete your entire account. This cannot be undone.
+            سيؤدي هذا إلى حذف حسابك بالكامل نهائيًا. لا يمكن التراجع عن هذا
+            الإجراء.
           </p>
         </div>
-        
-          <UButton
-            color="error"
-            :loading="deleteMutation.isPending.value"
-            @click="confirmDeleteAccount"
-          >
-            Delete Account
-          </UButton>
-        
+
+        <UButton
+          color="error"
+          :loading="deleteMutation.isPending.value"
+          @click="confirmDeleteAccount"
+        >
+          حذف الحساب
+        </UButton>
       </div>
     </div>
   </div>
@@ -68,76 +64,78 @@
 
 <script setup>
 // Use useAuth composable for all user-related mutations
-const alert = useAlert()
+const alert = useAlert();
 
 // Auth composable (TanStack Query powered)
 const {
   updateProfile: updateProfileMutationFactory,
   deleteAccount: deleteAccountFactory,
-  invalidateUser
-} = useAuth()
+  invalidateUser,
+} = useAuth();
 
 // Query mutations
-const updateMutation = updateProfileMutationFactory()
-const deleteMutation = deleteAccountFactory()
+const updateMutation = updateProfileMutationFactory();
+const deleteMutation = deleteAccountFactory();
 
-const { data: user } = useAuth().user()
+const { data: user } = useAuth().user();
 
 // Profile form
 const profileForm = useForm({
-  name: '',
-  email: '',
-})
+  name: "",
+  email: "",
+});
 
 // Update profile
 const updateProfile = () => {
-  profileForm.mutate(updateMutation)
+  profileForm
+    .mutate(updateMutation)
     .then(() => {
-      invalidateUser()
-      alert.success('Your info has been updated!')
+      invalidateUser();
+      alert.success("Your info has been updated!");
     })
     .catch((error) => {
-      console.error(error)
-      alert.error(error?.data?.message || 'Error updating profile')
-    })
-}
+      console.error(error);
+      alert.error(error?.data?.message || "Error updating profile");
+    });
+};
 
 // Delete account confirmation
 const confirmDeleteAccount = () => {
-  alert.confirm(
-    'Do you really want to delete your account?',
-    deleteAccount
-  )
-}
+  alert.confirm("Do you really want to delete your account?", deleteAccount);
+};
 
 // Delete account
 const deleteAccount = () => {
-  deleteMutation.mutateAsync()
+  deleteMutation
+    .mutateAsync()
     .then((data) => {
-      alert.success(data?.message || 'Your account has been deleted')
+      alert.success(data?.message || "Your account has been deleted");
       // Navigation handled by deleteAccount mutation
     })
     .catch((error) => {
-      alert.error(error?.data?.message || 'Error deleting account')
-    })
-}
+      alert.error(error?.data?.message || "Error deleting account");
+    });
+};
 
 // Initialize form with user data
 onBeforeMount(() => {
   if (user.value) {
     profileForm.keys().forEach((key) => {
-      profileForm[key] = user.value[key]
-    })
+      profileForm[key] = user.value[key];
+    });
   }
-})
+});
 
 // Watch for user changes
-watch(user, (newUser) => {
-  if (newUser) {
-    profileForm.keys().forEach((key) => {
-      profileForm[key] = newUser[key]
-    })
-  }
-}, { immediate: true })
-
-</script> 
+watch(
+  user,
+  (newUser) => {
+    if (newUser) {
+      profileForm.keys().forEach((key) => {
+        profileForm[key] = newUser[key];
+      });
+    }
+  },
+  { immediate: true },
+);
+</script>

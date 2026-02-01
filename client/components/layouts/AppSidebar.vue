@@ -20,7 +20,7 @@
           </template>
         </WorkspaceDropdown>
       </div>
-      
+
       <!-- User Dropdown -->
       <div class="flex gap-2 items-center">
         <UserDropdown>
@@ -32,7 +32,7 @@
                 :src="user?.photo_url"
                 class="rounded-full w-6 h-6"
                 :alt="user?.name"
-              >
+              />
             </button>
           </template>
         </UserDropdown>
@@ -41,23 +41,23 @@
 
     <!-- Navigation Slot -->
     <template #navigation>
-      <div 
-        v-for="(section, index) in navigationSections" 
+      <div
+        v-for="(section, index) in navigationSections"
         :key="section.name || 'main'"
         :class="[
           index !== navigationSections.length - 1 ? 'mb-6' : '',
           // Push Product and Help sections to bottom
-          index === 1 ? 'mt-auto' : ''
+          index === 1 ? 'mt-auto' : '',
         ]"
       >
         <!-- Section Title (if exists) -->
-        <h3 
+        <h3
           v-if="section.name"
           class="text-xs font-medium text-neutral-400 tracking-wider mb-2 px-3"
         >
           {{ section.name }}
         </h3>
-        
+
         <!-- Section Items -->
         <NavigationList
           :items="section.items"
@@ -71,26 +71,26 @@
 </template>
 
 <script setup>
-import BaseSidebar from "~/components/layouts/BaseSidebar.vue"
-import WorkspaceDropdown from "~/components/dashboard/WorkspaceDropdown.vue"
-import WorkspaceIcon from "~/components/workspaces/WorkspaceIcon.vue"
-import UserDropdown from "~/components/dashboard/UserDropdown.vue"
-import NavigationList from "~/components/global/NavigationList.vue"
-import { useSharedNavigation } from "~/composables/components/useSharedNavigation"
+import BaseSidebar from "~/components/layouts/BaseSidebar.vue";
+import WorkspaceDropdown from "~/components/dashboard/WorkspaceDropdown.vue";
+import WorkspaceIcon from "~/components/workspaces/WorkspaceIcon.vue";
+import UserDropdown from "~/components/dashboard/UserDropdown.vue";
+import NavigationList from "~/components/global/NavigationList.vue";
+import { useSharedNavigation } from "~/composables/components/useSharedNavigation";
 
-const route = useRoute()
-const sidebar = ref(null)
+const route = useRoute();
+const sidebar = ref(null);
 
-const { sharedNavigationSections, createNavItem } = useSharedNavigation()
+const { sharedNavigationSections, createNavItem } = useSharedNavigation();
 
-const { current: workspace } = useCurrentWorkspace()
-const isSelfHosted = computed(() => useFeatureFlag('self_hosted'))
-const { openSubscriptionModal } = useAppModals()
+const { current: workspace } = useCurrentWorkspace();
+const isSelfHosted = computed(() => useFeatureFlag("self_hosted"));
+const { openSubscriptionModal } = useAppModals();
 
 // Check if current route matches a prefix
 function isActiveRoute(prefix) {
-  if (!prefix) return false
-  return route.name?.startsWith(prefix)
+  if (!prefix) return false;
+  return route.name?.startsWith(prefix);
 }
 
 // Navigation sections structure
@@ -100,47 +100,51 @@ const navigationSections = computed(() => [
     name: null,
     items: [
       createNavItem({
-        label: 'Create Form',
-        icon: 'i-heroicons-plus',
-        to: { name: 'forms-create' },
-        active: isActiveRoute('forms-create'),
-        color: 'primary',
-        variant: 'ghost',
-        kbd: ['N'],
+        label: "إنشاء استبانة",
+        icon: "i-heroicons-plus",
+        to: { name: "forms-create" },
+        active: isActiveRoute("forms-create"),
+        color: "primary",
+        variant: "ghost",
+        kbd: ["N"],
       }),
       createNavItem({
-        label: 'Home', 
-        icon: 'i-heroicons-home',
-        to: { name: 'home' },
-        active: isActiveRoute('home')
+        label: "الصفحة الرئيسية",
+        icon: "i-heroicons-home",
+        to: { name: "home" },
+        active: isActiveRoute("home"),
       }),
       createNavItem({
-        label: 'Templates',
-        icon: 'i-heroicons-document-duplicate',
-        to: { name: 'templates-my-templates' },
-        active: isActiveRoute('templates')
+        label: "نماذجي",
+        icon: "i-heroicons-document-duplicate",
+        to: { name: "templates-my-templates" },
+        active: isActiveRoute("templates"),
       }),
       // Show upgrade for non-pro users
-      ...(workspace.value && !workspace.value.is_pro && !isSelfHosted.value ? [createNavItem({
-        label: 'Upgrade to Pro',
-        icon: 'i-heroicons-sparkles-solid', 
-        onClick: () => {
-          useAmplitude().logEvent('app_sidebar_upgrade_click')
-          openSubscriptionModal({
-            modal_title: 'Upgrade to Pro plan',
-          })
-        },
-        color: 'primary' // Override default color
-      })] : [])
-    ]
+      ...(workspace.value && !workspace.value.is_pro && !isSelfHosted.value
+        ? [
+            createNavItem({
+              label: "Upgrade to Pro",
+              icon: "i-heroicons-sparkles-solid",
+              onClick: () => {
+                useAmplitude().logEvent("app_sidebar_upgrade_click");
+                openSubscriptionModal({
+                  modal_title: "Upgrade to Pro plan",
+                });
+              },
+              color: "primary", // Override default color
+            }),
+          ]
+        : []),
+    ],
   },
   // Add shared navigation sections (Product and Help)
-  ...sharedNavigationSections.value
-])
+  ...sharedNavigationSections.value,
+]);
 
 function handleItemClick(_item) {
   if (sidebar.value && sidebar.value.isMobileMenuOpen) {
-    sidebar.value.isMobileMenuOpen = false
+    sidebar.value.isMobileMenuOpen = false;
   }
 }
-</script> 
+</script>

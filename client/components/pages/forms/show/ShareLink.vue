@@ -1,17 +1,15 @@
 <template>
   <div>
-    <h3 class="font-semibold text-xl">
-      Share Link
-    </h3>
+    <h3 class="font-semibold text-xl">Share Link</h3>
     <p>
-      Share your form with anyone by copying this link. You can use it on social media,
-      in messages, or send it via email to reach your audience.
+      Share your form with anyone by copying this link. You can use it on social
+      media, in messages, or send it via email to reach your audience.
     </p>
     <copy-content
       :content="share_url"
       :is-draft="form.visibility == 'draft'"
       tracking-event="share_link_copy_click"
-      :tracking-properties="{form_id: form.id, form_slug: form.slug}"
+      :tracking-properties="{ form_id: form.id, form_slug: form.slug }"
     >
       <template #icon>
         <svg
@@ -29,13 +27,13 @@
           />
         </svg>
       </template>
-      Copy Link
+      نسخ الرابط
     </copy-content>
   </div>
 </template>
 
 <script>
-import CopyContent from "../../../open/forms/components/CopyContent.vue"
+import CopyContent from "../../../open/forms/components/CopyContent.vue";
 
 export default {
   name: "ShareLink",
@@ -51,10 +49,10 @@ export default {
     share_url() {
       return this.extraQueryParam
         ? this.form.share_url + "?" + this.extraQueryParam
-        : this.form.share_url + this.extraQueryParam
+        : this.form.share_url + this.extraQueryParam;
     },
   },
 
   methods: {},
-}
+};
 </script>

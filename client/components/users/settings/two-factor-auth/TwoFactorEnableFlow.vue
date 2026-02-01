@@ -1,38 +1,36 @@
 <template>
   <div class="space-y-4">
-    <UButton
-      color="primary"
-      :loading="enabling"
-      @click="handleEnable"
-    >
-      Enable Two-Factor Authentication
+    <UButton color="primary" :loading="enabling" @click="handleEnable">
+      تفعيل المصادقة الثنائية
     </UButton>
 
     <!-- QR Code Display -->
     <VTransition name="fadeHeight">
-      <div v-if="secret" class="space-y-4 p-4 border border-neutral-200 rounded-lg bg-neutral-50">
+      <div
+        v-if="secret"
+        class="space-y-4 p-4 border border-neutral-200 rounded-lg bg-neutral-50"
+      >
         <div>
           <p class="text-sm font-medium text-neutral-900 mb-2">
-            Scan this QR code with your authenticator app:
+            امسح هذا الرمز QR باستخدام تطبيق المصادقة:
           </p>
-          <div class="flex justify-center p-4 bg-white rounded-lg max-w-xs mx-auto">
+          <div
+            class="flex justify-center p-4 bg-white rounded-lg max-w-xs mx-auto"
+          >
             <div v-html="qrCode" class="flex" />
           </div>
         </div>
 
         <div>
           <p class="text-sm font-medium text-neutral-900 mb-2">
-            Or enter this code manually:
+            أو أدخل هذا الرمز يدويًا:
           </p>
-          <CopyContent
-            :content="secret"
-            label="Copy Secret"
-          />
+          <CopyContent :content="secret" label="نسخ الرمز السري" />
         </div>
 
         <div>
           <p class="text-sm font-medium text-neutral-900 mb-2">
-            Enter the 6-digit code from your authenticator app to confirm:
+            أدخل الرمز المكون من 6 أرقام من تطبيق المصادقة للتأكيد:
           </p>
           <div class="flex justify-center mb-4">
             <UPinInput
@@ -50,7 +48,7 @@
             :disabled="code.length !== 6"
             @click="handleConfirm"
           >
-            Confirm and Enable
+            تأكيد وتمكين المصادقة الثنائية
           </UButton>
         </div>
       </div>
@@ -59,33 +57,35 @@
 </template>
 
 <script setup>
-import CopyContent from '~/components/open/forms/components/CopyContent.vue'
+import CopyContent from "~/components/open/forms/components/CopyContent.vue";
 
 const props = defineProps({
   enabling: { type: Boolean, default: false },
   confirming: { type: Boolean, default: false },
   secret: { type: String, default: null },
   qrCode: { type: String, default: null },
-})
+});
 
-const emit = defineEmits(['enable', 'confirm'])
+const emit = defineEmits(["enable", "confirm"]);
 
-const code = ref([])
+const code = ref([]);
 
 const handleEnable = () => {
-  emit('enable')
-}
+  emit("enable");
+};
 
 const handleConfirm = () => {
   if (code.value.length === 6) {
-    emit('confirm', code.value.join(''))
+    emit("confirm", code.value.join(""));
   }
-}
+};
 
-watch(() => props.secret, (newSecret) => {
-  if (!newSecret) {
-    code.value = []
-  }
-})
+watch(
+  () => props.secret,
+  (newSecret) => {
+    if (!newSecret) {
+      code.value = [];
+    }
+  },
+);
 </script>
-

@@ -1,12 +1,8 @@
 <template>
-  <UButtonGroup
-    size="sm"
-    orientation="horizontal"
-    class="shadow-none"
-  >
+  <UButtonGroup size="sm" orientation="horizontal" class="shadow-none">
     <UTooltip
-      text="Undo"
-      :kbds="['meta','Z']"
+      text="تراجع"
+      :kbds="['meta', 'Z']"
       :content="{ side: 'left' }"
       arrow
     >
@@ -20,8 +16,8 @@
       />
     </UTooltip>
     <UTooltip
-      text="Redo"
-      :kbds="['meta','Shift','Z']"
+      text="إعادة"
+      :kbds="['meta', 'Shift', 'Z']"
       :content="{ side: 'right' }"
       arrow
     >
@@ -39,32 +35,34 @@
 
 <script setup>
 const props = defineProps({
-  editor: { type: String, default: 'form' }
-})
+  editor: { type: String, default: "form" },
+});
 
-let workingStore = useWorkingFormStore()
-if (props.editor === 'view') {
-  workingStore = useWorkingViewStore()
+let workingStore = useWorkingFormStore();
+if (props.editor === "view") {
+  workingStore = useWorkingViewStore();
 }
 
-const { undo, redo, clearHistory } = workingStore
-const { canUndo, canRedo } = storeToRefs(workingStore)
+const { undo, redo, clearHistory } = workingStore;
+const { canUndo, canRedo } = storeToRefs(workingStore);
 
 defineShortcuts({
   meta_z: {
     whenever: [canUndo],
     handler: () => {
-      undo()
-    }
+      undo();
+    },
   },
   meta_shift_z: {
     whenever: [canRedo],
     handler: () => {
-      redo()
-    }
-  }
-})
+      redo();
+    },
+  },
+});
 onMounted(() => {
-  setTimeout(() => { clearHistory() }, 500)
-})
+  setTimeout(() => {
+    clearHistory();
+  }, 500);
+});
 </script>

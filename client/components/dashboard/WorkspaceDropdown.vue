@@ -7,7 +7,7 @@
     v-bind="$attrs"
   >
     <slot :workspace="workspace" />
-    
+
     <template #content>
       <div class="w-60 flex flex-col">
         <!-- Workspace Info Header -->
@@ -19,7 +19,8 @@
                 {{ workspace.name }}
               </p>
               <p class="text-xs text-neutral-500">
-                {{ workspacePlanText }} • {{ memberCountText }}
+                {{ memberCountText }}
+                <!-- {{ workspacePlanText }} • {{ memberCountText }} -->
               </p>
             </div>
           </div>
@@ -30,7 +31,7 @@
               color="neutral"
               variant="outline"
               @click="openSettings"
-              label="Settings"
+              label="الإعدادات "
             />
             <UButton
               v-if="workspace.is_admin"
@@ -39,14 +40,18 @@
               color="neutral"
               variant="outline"
               @click="openInviteUserModal"
-              label="Invite Members"
+              label="دعوة مستخدمين"
             />
           </div>
         </div>
 
         <!-- Workspace List (with ScrollableContainer) -->
         <div v-if="workspaces.length > 1" class="p-1">
-          <ScrollableContainer max-height-class="max-h-64" top-fade-height="h-10" bottom-fade-height="h-10">
+          <ScrollableContainer
+            max-height-class="max-h-64"
+            top-fade-height="h-10"
+            bottom-fade-height="h-10"
+          >
             <div class="flex flex-col">
               <UButton
                 v-for="worksp in workspaces"
@@ -57,7 +62,9 @@
                 @click="switchWorkspace(worksp)"
                 :label="worksp.name"
                 size="sm"
-                :trailing-icon="workspace?.id === worksp?.id ? 'i-heroicons-check' : undefined"
+                :trailing-icon="
+                  workspace?.id === worksp?.id ? 'i-heroicons-check' : undefined
+                "
               >
                 <template #leading>
                   <WorkspaceIcon :workspace="worksp" size="size-5" />
@@ -75,7 +82,7 @@
             color="neutral"
             variant="ghost"
             @click="createNewWorkspace"
-            label="Create Workspace"
+            label="إنشاء مساحة عمل جديدة"
             size="sm"
           />
         </div>
@@ -97,101 +104,104 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue"
-import WorkspaceIcon from "~/components/workspaces/WorkspaceIcon.vue"
-import CreateWorkspaceModal from "~/components/workspaces/CreateWorkspaceModal.vue"
-import WorkspacesSettingsInviteUser from '~/components/workspaces/settings/InviteUser.vue'
-import ScrollableContainer from '~/components/dashboard/ScrollableContainer.vue'
-
+import { computed, ref } from "vue";
+import WorkspaceIcon from "~/components/workspaces/WorkspaceIcon.vue";
+import CreateWorkspaceModal from "~/components/workspaces/CreateWorkspaceModal.vue";
+import WorkspacesSettingsInviteUser from "~/components/workspaces/settings/InviteUser.vue";
+import ScrollableContainer from "~/components/dashboard/ScrollableContainer.vue";
 
 defineProps({
   content: {
     type: Object,
     default: () => ({
-      side: 'bottom',
-      align: 'start'
-    })
-  }
-})
+      side: "bottom",
+      align: "start",
+    }),
+  },
+});
 
-const { openSubscriptionModal } = useAppModals()
-const router = useRouter()
-const route = useRoute()
-const appStore = useAppStore()
+const { openSubscriptionModal } = useAppModals();
+const router = useRouter();
+const route = useRoute();
+const appStore = useAppStore();
 
-const { data: user } = useAuth().user()
-const { data: workspaces } = useWorkspaces().list()
-const { current: workspace } = useCurrentWorkspace()
+const { data: user } = useAuth().user();
+const { data: workspaces } = useWorkspaces().list();
+const { current: workspace } = useCurrentWorkspace();
 
 // Extract composable methods in setup context
-const { invalidateAll: invalidateForms } = useForms()
-const { invalidateAll: invalidateWorkspaces } = useWorkspaces()
+const { invalidateAll: invalidateForms } = useForms();
+const { invalidateAll: invalidateWorkspaces } = useWorkspaces();
 
 // Modal state
-const showCreateModal = ref(false)
-const showInviteUserModal = ref(false)
+const showCreateModal = ref(false);
+const showInviteUserModal = ref(false);
 
 // Dropdown state
-const isDropdownOpen = ref(false)
+const isDropdownOpen = ref(false);
 
 // Computed text for workspace plan
 const workspacePlanText = computed(() => {
-  if (!workspace.value) return ''
-  return workspace.value.is_pro ? 'Pro Plan' : 'Free Plan'
-})
+  if (!workspace.value) return "";
+  return workspace.value.is_pro ? "Pro Plan" : "Free Plan";
+});
 
 // Computed text for member count
 const memberCountText = computed(() => {
-  if (!workspace.value || !workspace.value.users_count) return '1 member'
-  const count = workspace.value.users_count
-  return count === 1 ? '1 member' : `${count} members`
-})
+  if (!workspace.value || !workspace.value.users_count) return "1 عضو";
+  const count = workspace.value.users_count;
+  return count === 1 ? "1 عضو" : `${count} أعضاء`;
+});
 
 const switchWorkspace = (workspaceToSwitch) => {
   if (workspaceToSwitch.id === workspace.value.id) {
-    return
+    return;
   }
-  appStore.setCurrentId(workspaceToSwitch.id)
-  invalidateForms()
-  
+  appStore.setCurrentId(workspaceToSwitch.id);
+  invalidateForms();
+
   if (route.name !== "home") {
-    router.push({ name: "home" })
+    router.push({ name: "home" });
   }
-}
+};
 
 const createNewWorkspace = () => {
   if (!user.value.is_pro && workspaces.value.length >= 1) {
-    openSubscriptionModal({ modal_title: 'Upgrade to create additional workspaces', modal_description: 'Try our Pro plan for free today, and unlock all of our features such as collaboration, multiple workspaces, custom domains, forms analytics, integrations, and more!' })
-    return
+    openSubscriptionModal({
+      modal_title: "Upgrade to create additional workspaces",
+      modal_description:
+        "Try our Pro plan for free today, and unlock all of our features such as collaboration, multiple workspaces, custom domains, forms analytics, integrations, and more!",
+    });
+    return;
   }
-  showCreateModal.value = true
-}
+  showCreateModal.value = true;
+};
 
 const onWorkspaceCreated = (_newWorkspace) => {
   // Member count is now included in workspace data automatically
-}
+};
 
 const onUserAdded = () => {
-  invalidateWorkspaces()
-}
+  invalidateWorkspaces();
+};
 
 const openSettings = () => {
-  isDropdownOpen.value = false
-  useAppModals().openWorkspaceSettings('information')
-}
+  isDropdownOpen.value = false;
+  useAppModals().openWorkspaceSettings("information");
+};
 
 const openInviteUserModal = () => {
-  isDropdownOpen.value = false
+  isDropdownOpen.value = false;
 
   if (workspace.value && !workspace.value.is_pro) {
-    openSubscriptionModal({ modal_title: 'Upgrade to invite users to your workspace' })
-    return
+    openSubscriptionModal({
+      modal_title: "Upgrade to invite users to your workspace",
+    });
+    return;
   }
-  
-  showInviteUserModal.value = true
-}
 
-
+  showInviteUserModal.value = true;
+};
 </script>
 
 <style></style>

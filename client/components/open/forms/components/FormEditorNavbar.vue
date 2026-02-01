@@ -12,22 +12,21 @@
       />
     </a>
 
-
     <UTabs
       id="form-editor-navbar-tabs"
       class="px-4"
       v-model="activeTab"
       :content="false"
       :items="[
-        { label: 'Build', value: 'build' },
-        { label: 'Design', value: 'design'}
+        { label: 'بناء', value: 'build' },
+        { label: 'تصميم', value: 'design' },
       ]"
     />
     <UButton
       color="neutral"
       variant="subtle"
       icon="i-heroicons-cog-6-tooth"
-      label="Settings"
+      label="الإعدادات "
       @click="settingsModal = true"
     />
     <FormSettingsModal
@@ -36,10 +35,7 @@
       hydrate-on-interaction
     />
 
-    <GitHubStar
-      v-if="isSelfHosted"
-      class="mt-2 ml-2"
-    />
+    <GitHubStar v-if="isSelfHosted" class="mt-2 ml-2" />
 
     <div class="flex-grow flex justify-center gap-2">
       <EditableTag
@@ -53,22 +49,20 @@
         color="warning"
         variant="soft"
         icon="i-heroicons-pencil-square"
-        label="Draft"
+        label="مسودة"
       />
       <UBadge
         v-else-if="form.visibility == 'closed'"
         color="neutral"
         variant="soft"
         icon="i-heroicons-lock-closed-20-solid"
-        label="Closed"
+        label="مغلق"
       />
     </div>
 
     <UndoRedo />
 
-    <div
-      class="flex items-stretch gap-x-2"
-    >
+    <div class="flex items-stretch gap-x-2">
       <TrackClick name="form_editor_help_button_clicked">
         <UTooltip
           text="Help"
@@ -85,20 +79,12 @@
         </UTooltip>
       </TrackClick>
       <slot name="before-save" />
-      <UTooltip arrow :content="{side: 'bottom'}">
+      <UTooltip arrow :content="{ side: 'bottom' }">
         <template #content>
-          <UKbd
-            value="meta"
-            size="xs"
-          />
-          <UKbd
-            value="s"
-            size="xs"
-          />
+          <UKbd value="meta" size="xs" />
+          <UKbd value="s" size="xs" />
         </template>
-        <TrackClick
-          name="save_form_click"
-        >
+        <TrackClick name="save_form_click">
           <UButton
             color="primary"
             class="px-8 md:px-4 py-2"
@@ -106,7 +92,9 @@
             :class="saveButtonClass"
             icon="i-ic-outline-save"
             @click="emit('save-form')"
-            :label="form.visibility === 'public' ? 'Publish Form' : 'Save Changes'"
+            :label="
+              form.visibility === 'public' ? 'نشر النموذج' : 'حفظ التغييرات'
+            "
           />
         </TrackClick>
       </UTooltip>
@@ -115,43 +103,43 @@
 </template>
 
 <script setup>
-import { storeToRefs } from 'pinia'
-import UndoRedo from '~/components/open/editors/UndoRedo.vue'
-import FormSettingsModal from '~/components/open/forms/components/form-components/FormSettingsModal.vue'
-import EditableTag from '~/components/app/EditableTag.vue'
-import TrackClick from '~/components/global/TrackClick.vue'
-import { useFeatureFlag } from '~/composables/useFeatureFlag'
+import { storeToRefs } from "pinia";
+import UndoRedo from "~/components/open/editors/UndoRedo.vue";
+import FormSettingsModal from "~/components/open/forms/components/form-components/FormSettingsModal.vue";
+import EditableTag from "~/components/app/EditableTag.vue";
+import TrackClick from "~/components/global/TrackClick.vue";
+import { useFeatureFlag } from "~/composables/useFeatureFlag";
 
 defineProps({
   backButton: {
     type: Boolean,
-    default: true
+    default: true,
   },
   updateFormLoading: {
     type: Boolean,
-    required: true
+    required: true,
   },
   saveButtonClass: {
     type: String,
-    default: ''
-  }
-})
+    default: "",
+  },
+});
 
-const emit = defineEmits(['go-back', 'save-form'])
+const emit = defineEmits(["go-back", "save-form"]);
 
 defineShortcuts({
   meta_s: {
-    handler: () => emit('save-form')
-  }
-})
+    handler: () => emit("save-form"),
+  },
+});
 
-const workingFormStore = useWorkingFormStore()
-const crisp = useCrisp()
+const workingFormStore = useWorkingFormStore();
+const crisp = useCrisp();
 
-const form = computed(() => workingFormStore.content)
-const { activeTab } = storeToRefs(workingFormStore)
+const form = computed(() => workingFormStore.content);
+const { activeTab } = storeToRefs(workingFormStore);
 
-const settingsModal = ref(false)
+const settingsModal = ref(false);
 
-const isSelfHosted = computed(() => useFeatureFlag('self_hosted'))
+const isSelfHosted = computed(() => useFeatureFlag("self_hosted"));
 </script>

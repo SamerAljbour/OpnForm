@@ -1,12 +1,9 @@
 <template>
-  <ErrorBoundary
-    ref="error_boundary"
-    @on-error="handleError"
-  >
+  <ErrorBoundary ref="error_boundary" @on-error="handleError">
     <QueryBuilder
       v-model="query"
       :config="config"
-      where-text="When"
+      where-text="عندما"
       v-bind="$attrs"
       @update:model-value="onChange"
     >
@@ -18,14 +15,14 @@
         />
       </template>
     </QueryBuilder>
-  </ErrorBoundary> 
+  </ErrorBoundary>
 </template>
 
 <script>
-import ErrorBoundary from '~/components/app/ErrorBoundary.vue'
-import { defineComponent } from "vue"
-import QueryBuilder from "~/components/tools/query-builder/QueryBuilder.vue"
-import ColumnCondition from "./ColumnCondition.vue"
+import ErrorBoundary from "~/components/app/ErrorBoundary.vue";
+import { defineComponent } from "vue";
+import QueryBuilder from "~/components/tools/query-builder/QueryBuilder.vue";
+import ColumnCondition from "./ColumnCondition.vue";
 
 export default {
   components: {
@@ -39,24 +36,28 @@ export default {
     modelValue: { type: Object, required: false },
     customValidation: { type: Boolean, default: false },
   },
-  emits:  ['update:modelValue'],
+  emits: ["update:modelValue"],
 
   data() {
     return {
       query: this.modelValue,
-    }
+    };
   },
 
   computed: {
     rules() {
       return this.form.properties
         .filter((property) => {
-          return property.type && typeof property.type === 'string' && !property.type.startsWith("nf-")
+          return (
+            property.type &&
+            typeof property.type === "string" &&
+            !property.type.startsWith("nf-")
+          );
         })
         .map((property) => {
-          const workspaceId = this.form.workspace_id
-          const formSlug = this.form.slug
-          const customValidation = this.customValidation
+          const workspaceId = this.form.workspace_id;
+          const formSlug = this.form.slug;
+          const customValidation = this.customValidation;
           return {
             identifier: property.id,
             name: property.name,
@@ -66,24 +67,24 @@ export default {
                 props: {
                   customValidation: {
                     type: Boolean,
-                    default: customValidation
-                  }
+                    default: customValidation,
+                  },
                 },
                 computed: {
                   property() {
-                    return property
+                    return property;
                   },
                   viewContext() {
                     return {
                       form_slug: formSlug,
                       workspace_id: workspaceId,
-                    }
+                    };
                   },
                 },
-              })
+              });
             })(),
-          }
-        })
+          };
+        });
     },
 
     config() {
@@ -107,30 +108,29 @@ export default {
           "#8b5cf6",
           "#ec4899",
         ],
-      }
+      };
     },
   },
 
   watch: {
     modelValue() {
-      this.query = this.modelValue
+      this.query = this.modelValue;
     },
   },
 
   methods: {
     onChange() {
-      this.$emit("update:modelValue", this.query)
+      this.$emit("update:modelValue", this.query);
     },
     // If there was some changes to the structure, causing an issue, we clear the condition
-    handleError (error) {
+    handleError(error) {
       this.$nextTick(() => {
-        console.error('Error with condition - clearing previous value', error)
-        this.query = null
-        this.onChange()
-        this.$refs['error_boundary'].clearError()
-      })
-    }
-  }
-}
+        console.error("Error with condition - clearing previous value", error);
+        this.query = null;
+        this.onChange();
+        this.$refs["error_boundary"].clearError();
+      });
+    },
+  },
+};
 </script>
-

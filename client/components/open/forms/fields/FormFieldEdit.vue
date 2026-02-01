@@ -1,8 +1,5 @@
 <template>
-  <div 
-    :class="{ 'sidebar-bounce': sidebarBounce }"
-    class="sidebar-container"
-  >
+  <div :class="{ 'sidebar-bounce': sidebarBounce }" class="sidebar-container">
     <div class="p-2 border-b sticky top-0 z-20 bg-white">
       <UButton
         v-if="!field"
@@ -21,19 +18,16 @@
             variant="ghost"
             @click="closeSidebar"
           />
-          <div class="ml-2 flex flex-grow items-center space-between min-w-0 gap-x-3">
+          <div
+            class="ml-2 flex flex-grow items-center space-between min-w-0 gap-x-3"
+          >
             <div class="flex-grow" />
-            <BlockTypeIcon
-              :type="field.type"
-            />
+            <BlockTypeIcon :type="field.type" />
 
-            <p
-              v-if="blocksTypes[field.type]"
-              class="text-sm text-neutral-500"
-            >
+            <p v-if="blocksTypes[field.type]" class="text-sm text-neutral-500">
               {{ blocksTypes[field.type].title }}
             </p>
-            
+
             <UDropdownMenu
               :items="dropdownItems"
               :content="{ side: 'bottom', align: 'start' }"
@@ -61,23 +55,11 @@
         />
       </div>
       <div v-if="activeTab === 'options'">
-        <FieldOptions
-          v-if="!isBlockField"
-          :form="form"
-          :field="field"
-        />
-        <BlockOptions
-          v-else
-          :form="form"
-          :field="field"
-        />
+        <FieldOptions v-if="!isBlockField" :form="form" :field="field" />
+        <BlockOptions v-else :form="form" :field="field" />
       </div>
       <div v-else-if="activeTab === 'logic'">
-        <FormBlockLogicEditor
-          class="py-2 px-4"
-          :form="form"
-          :field="field"
-        />
+        <FormBlockLogicEditor class="py-2 px-4" :form="form" :field="field" />
       </div>
       <div v-else-if="activeTab === 'validation'">
         <custom-field-validation
@@ -87,189 +69,212 @@
         />
       </div>
     </template>
-    <div
-      v-else
-      class="text-center p-10 text-sm text-neutral-500"
-    >
+    <div v-else class="text-center p-10 text-sm text-neutral-500">
       Click on field to edit it.
     </div>
   </div>
 </template>
 
-
 <script setup>
-import { storeToRefs } from 'pinia'
-import FieldOptions from './components/FieldOptions.vue'
-import BlockOptions from './components/BlockOptions.vue'
-import BlockTypeIcon from '../components/BlockTypeIcon.vue'
-import blocksTypes from '~/data/blocks_types.json'
-import FormBlockLogicEditor from '../components/form-logic-components/FormBlockLogicEditor.vue'
-import CustomFieldValidation from '../components/CustomFieldValidation.vue'
+import { storeToRefs } from "pinia";
+import FieldOptions from "./components/FieldOptions.vue";
+import BlockOptions from "./components/BlockOptions.vue";
+import BlockTypeIcon from "../components/BlockTypeIcon.vue";
+import blocksTypes from "~/data/blocks_types.json";
+import FormBlockLogicEditor from "../components/form-logic-components/FormBlockLogicEditor.vue";
+import CustomFieldValidation from "../components/CustomFieldValidation.vue";
 
-const workingFormStore = useWorkingFormStore()
-const { content: form, sidebarBounce } = storeToRefs(workingFormStore)
+const workingFormStore = useWorkingFormStore();
+const { content: form, sidebarBounce } = storeToRefs(workingFormStore);
 
-const selectedFieldIndex = computed(() => workingFormStore.selectedFieldIndex)
+const selectedFieldIndex = computed(() => workingFormStore.selectedFieldIndex);
 
 const field = computed(() => {
   return form.value && selectedFieldIndex.value !== null
     ? form.value.properties[selectedFieldIndex.value]
-    : null
-})
+    : null;
+});
 
 // Only set the page once when the component is mounted
 // This prevents page jumps when editing field properties
 onMounted(() => {
   if (selectedFieldIndex.value !== null) {
     if (workingFormStore.structureService) {
-      workingFormStore.structureService.setPageForField(selectedFieldIndex.value)
+      workingFormStore.structureService.setPageForField(
+        selectedFieldIndex.value,
+      );
     }
   }
-})
+});
 
 const isBlockField = computed(() => {
-  return field.value && field.value.type && typeof field.value.type === 'string' && field.value.type.startsWith('nf')
-})
+  return (
+    field.value &&
+    field.value.type &&
+    typeof field.value.type === "string" &&
+    field.value.type.startsWith("nf")
+  );
+});
 
 const typeCanBeChanged = computed(() => {
-  const textualTypes = ["text", "rich_text", "url", "email", "phone_number", "number"]
-  const selectionTypes = ["select", "multi_select"]
-  const scaleTypes = ["rating", "scale", "slider"]
-  const booleanTypes = ["checkbox"]
+  const textualTypes = [
+    "text",
+    "rich_text",
+    "url",
+    "email",
+    "phone_number",
+    "number",
+  ];
+  const selectionTypes = ["select", "multi_select"];
+  const scaleTypes = ["rating", "scale", "slider"];
+  const booleanTypes = ["checkbox"];
   return [
     ...textualTypes,
     ...selectionTypes,
     ...scaleTypes,
     ...booleanTypes,
-  ].includes(field.value.type)
-})
+  ].includes(field.value.type);
+});
 
 // Composable for field type changing logic
 const useFieldTypeChange = () => {
-
   const onChangeType = (newType) => {
     if (["select", "multi_select"].includes(field.value.type)) {
-      field.value[newType] = field.value[field.value.type] // Set new options with new type
-      delete field.value[field.value.type] // remove old type options
+      field.value[newType] = field.value[field.value.type]; // Set new options with new type
+      delete field.value[field.value.type]; // remove old type options
     }
 
     // Preserve/downgrade content when converting between text and rich_text
-    if ((field.value.type === 'text' && newType === 'rich_text') || (field.value.type === 'rich_text' && newType === 'text')) {
+    if (
+      (field.value.type === "text" && newType === "rich_text") ||
+      (field.value.type === "rich_text" && newType === "text")
+    ) {
       // keep existing value in place; renderer handles component mapping
     }
 
-    field.value.type = newType
-  }
+    field.value.type = newType;
+  };
 
   const getChangeTypeOptions = (currentType) => {
-    const textualTypes = ["text", "rich_text", "url", "email", "phone_number", "number"]
-    const selectionTypes = ["select", "multi_select"]
-    const scaleTypes = ["rating", "scale", "slider"]
-    const booleanTypes = ["checkbox"]
+    const textualTypes = [
+      "text",
+      "rich_text",
+      "url",
+      "email",
+      "phone_number",
+      "number",
+    ];
+    const selectionTypes = ["select", "multi_select"];
+    const scaleTypes = ["rating", "scale", "slider"];
+    const booleanTypes = ["checkbox"];
 
-    let candidateTypes = []
+    let candidateTypes = [];
 
     if (textualTypes.includes(currentType)) {
-      candidateTypes = [...textualTypes, ...booleanTypes]
+      candidateTypes = [...textualTypes, ...booleanTypes];
     } else if (selectionTypes.includes(currentType)) {
-      candidateTypes = [...selectionTypes]
+      candidateTypes = [...selectionTypes];
     } else if (scaleTypes.includes(currentType)) {
-      candidateTypes = [...scaleTypes]
+      candidateTypes = [...scaleTypes];
     } else if (booleanTypes.includes(currentType)) {
-      candidateTypes = [...textualTypes, ...booleanTypes]
+      candidateTypes = [...textualTypes, ...booleanTypes];
     }
 
     return candidateTypes
       .filter((type) => type !== currentType)
       .map((type) => {
-        const meta = blocksTypes[type] || {}
+        const meta = blocksTypes[type] || {};
         return {
           label: meta.title || type,
           value: type,
           icon: meta.icon || undefined,
-          onClick: () => onChangeType(type)
-        }
-      })
-  }
+          onClick: () => onChangeType(type),
+        };
+      });
+  };
 
   return {
-    getChangeTypeOptions
-  }
-}
+    getChangeTypeOptions,
+  };
+};
 
-const { getChangeTypeOptions } = useFieldTypeChange()
+const { getChangeTypeOptions } = useFieldTypeChange();
 
 function removeBlock() {
-  workingFormStore.removeField(field.value)
+  workingFormStore.removeField(field.value);
 }
 
 function closeSidebar() {
   // Explicitly clear the selected field index to prevent issues with subsequent block additions
-  workingFormStore.selectedFieldIndex = null
-  workingFormStore.closeEditFieldSidebar()
+  workingFormStore.selectedFieldIndex = null;
+  workingFormStore.closeEditFieldSidebar();
 }
 
 const dropdownItems = computed(() => {
   const baseItems = [
-    [{
-      label: 'Copy field ID',
-      icon: 'i-heroicons-clipboard-20-solid',
-      onClick: () => {
-        navigator.clipboard.writeText(field.value.id)
-        useAlert().success('Field ID copied to clipboard')
-      }
-    }],
-    [{
-      label: 'Duplicate',
-      icon: 'i-heroicons-document-duplicate-20-solid',
-      kbds: ['meta', 'd'],
-      onClick: () => workingFormStore.duplicateField(field.value)
-    }]
-  ]
+    [
+      {
+        label: "نسخ معرّف الحقل",
+        icon: "i-heroicons-clipboard-20-solid",
+        onClick: () => {
+          navigator.clipboard.writeText(field.value.id);
+          useAlert().success("Field ID copied to clipboard");
+        },
+      },
+    ],
+    [
+      {
+        label: "تكرار الحقل",
+        icon: "i-heroicons-document-duplicate-20-solid",
+        kbds: ["meta", "d"],
+        onClick: () => workingFormStore.duplicateField(field.value),
+      },
+    ],
+  ];
 
   // Add change type option with nested menu if type can be changed
   if (typeCanBeChanged.value && !isBlockField.value) {
-    const changeTypeOptions = getChangeTypeOptions(field.value.type)
+    const changeTypeOptions = getChangeTypeOptions(field.value.type);
     if (changeTypeOptions.length > 0) {
-      baseItems.push([{
-        label: 'Change type',
-        icon: 'i-heroicons-arrows-right-left-20-solid',
-        children: [changeTypeOptions]
-      }])
+      baseItems.push([
+        {
+          label: "تغيير النوع",
+          icon: "i-heroicons-arrows-right-left-20-solid",
+          children: [changeTypeOptions],
+        },
+      ]);
     }
   }
 
   // Add remove option
-  baseItems.push([{
-    label: 'Remove',
-    icon: 'i-heroicons-trash-20-solid',
-    color: 'error',
-    kbds: ['meta', 'backspace'],
-    onClick: removeBlock
-  }])
+  baseItems.push([
+    {
+      label: "حذف الحقل",
+      icon: "i-heroicons-trash-20-solid",
+      color: "error",
+      kbds: ["meta", "backspace"],
+      onClick: removeBlock,
+    },
+  ]);
 
-  return baseItems
-})
-defineShortcuts(extractShortcuts(dropdownItems.value))
+  return baseItems;
+});
+defineShortcuts(extractShortcuts(dropdownItems.value));
 
-const activeTab = ref('options')
+const activeTab = ref("options");
 
 const tabItems = computed(() => {
   const commonTabs = [
-    { label: 'Options', value: 'options' },
-    { label: 'Logic', value: 'logic' },
-  ]
+    { label: "الخيارات", value: "options" },
+    { label: "المنطق", value: "logic" },
+  ];
 
   if (isBlockField.value) {
-    return commonTabs
+    return commonTabs;
   } else {
-    return [
-      ...commonTabs,
-      { label: 'Validation', value: 'validation' },
-    ]
+    return [...commonTabs, { label: "التحقق", value: "validation" }];
   }
-})
-
+});
 </script>
 
 <style scoped>

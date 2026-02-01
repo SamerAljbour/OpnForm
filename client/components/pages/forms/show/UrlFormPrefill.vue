@@ -12,47 +12,43 @@
         color="neutral"
         icon="i-heroicons-link"
         @click="showUrlFormPrefillModal = true"
-        label="URL Pre-fill"
+        label="ملء مسبق للرابط"
       />
     </TrackClick>
 
-    <UModal
-      v-model:open="isModalOpen"
-      :ui="{ content: 'sm:max-w-2xl' }"
-    >
+    <UModal v-model:open="isModalOpen" :ui="{ content: 'sm:max-w-2xl' }">
       <template #header>
         <div class="flex items-center w-full gap-4 px-2">
-          <h2 class="font-semibold">
-            Url Form Prefill
-          </h2>
+          <h2 class="font-semibold">ملء مسبق للرابط</h2>
         </div>
-        <UButton
+        <!-- <UButton
           color="neutral"
           variant="outline"
           icon="i-heroicons-question-mark-circle"
           size="sm"
-          @click="crisp.openHelpdeskArticle('how-to-use-url-form-pre-fill-1juyi21')"
+          @click="
+            crisp.openHelpdeskArticle('how-to-use-url-form-pre-fill-1juyi21')
+          "
         >
           Help
-        </UButton>
+        </UButton> -->
       </template>
 
       <template #body>
         <div ref="content">
           <p>
-            Create dynamic links when sharing your form (whether it's embedded or
-            not), that allows you to prefill your form fields. You can use this to
-            personalize the form when sending it to multiple contacts for
-            instance.
+            أنشئ روابط ديناميكية عند مشاركة نموذجك (سواء كان مضمّنًا أو لا)، مما
+            يتيح لك تعبئة حقول النموذج مسبقًا. يمكنك استخدام هذا لتخصيص النموذج
+            عند إرساله لعدة جهات اتصال على سبيل المثال.
           </p>
 
           <h3 class="mt-6 border-t text-xl font-semibold mb-4 pt-6">
-            How does it work?
+            كيف يعمل؟
           </h3>
 
           <p>
-            Complete your form below and fill only the fields you want to prefill.
-            You can even leave the required fields empty.
+            أكمل نموذجك أدناه واملأ فقط الحقول التي تريد تعبئتها مسبقًا. يمكنك
+            حتى ترك الحقول المطلوبة فارغة.
           </p>
 
           <div class="rounded-lg p-5 bg-neutral-100 dark:bg-neutral-900 mt-4">
@@ -61,19 +57,19 @@
               :form-manager="formManager"
               @submit="generateUrl"
             >
-              <template #submit-btn="{loading}">
+              <template #submit-btn="{ loading }">
                 <UButton
                   class="mt-4"
                   :loading="loading"
                   @click="generateUrl"
-                  label="Generate Pre-filled URL"
+                  label="إنشاء رابط مسبق التعبئة"
                 />
               </template>
             </OpenForm>
           </div>
 
           <h3 class="mt-6 text-xl font-semibold mb-4 pt-6">
-            Your Prefill url
+            رابط التعبئة المسبقة الخاص بك
           </h3>
           <FormUrlPrefill
             :form="form"
@@ -87,72 +83,76 @@
 </template>
 
 <script setup>
-import FormUrlPrefill from "~/components/open/forms/components/FormUrlPrefill.vue"
-import OpenForm from "~/components/open/forms/OpenForm.vue"
-import { FormMode } from "~/lib/forms/FormModeStrategy.js"
-import { useFormManager } from '~/lib/forms/composables/useFormManager'
-import TrackClick from "~/components/global/TrackClick.vue"
+import FormUrlPrefill from "~/components/open/forms/components/FormUrlPrefill.vue";
+import OpenForm from "~/components/open/forms/OpenForm.vue";
+import { FormMode } from "~/lib/forms/FormModeStrategy.js";
+import { useFormManager } from "~/lib/forms/composables/useFormManager";
+import TrackClick from "~/components/global/TrackClick.vue";
 
 const props = defineProps({
   form: { type: Object, required: true },
   extraQueryParam: { type: String, default: "" },
-})
+});
 
-const crisp = useCrisp()
+const crisp = useCrisp();
 
 // State variables
-const prefillFormData = ref(null)
-const showUrlFormPrefillModal = ref(false)
-const content = ref(null)
+const prefillFormData = ref(null);
+const showUrlFormPrefillModal = ref(false);
+const content = ref(null);
 
 // Modal state
 const isModalOpen = computed({
   get() {
-    return showUrlFormPrefillModal.value
+    return showUrlFormPrefillModal.value;
   },
   set(value) {
-    showUrlFormPrefillModal.value = value
-  }
-})
+    showUrlFormPrefillModal.value = value;
+  },
+});
 
 // Set up form manager with proper mode
-let formManager = null
+let formManager = null;
 const setupFormManager = () => {
-  if (!props.form) return null
-  
+  if (!props.form) return null;
+
   formManager = useFormManager(props.form, FormMode.PREFILL, {
-    darkMode: false
-  })
-  formManager.initialize()
-  
-  return formManager
-}
+    darkMode: false,
+  });
+  formManager.initialize();
+
+  return formManager;
+};
 
 // Initialize form manager
-formManager = setupFormManager()
+formManager = setupFormManager();
 
 // Watch for form changes to reinitialize form manager
-watch(() => props.form, (newForm) => {
-  if (newForm) {
-    formManager = setupFormManager()
-  } else {
-    formManager = null
-  }
-}, { deep: true })
+watch(
+  () => props.form,
+  (newForm) => {
+    if (newForm) {
+      formManager = setupFormManager();
+    } else {
+      formManager = null;
+    }
+  },
+  { deep: true },
+);
 
 // Method to generate URL
 const generateUrl = () => {
-  if (!formManager) return
-  
-  const formData = formManager.data.value
-  
-  prefillFormData.value = formData
-  
+  if (!formManager) return;
+
+  const formData = formManager.data.value;
+
+  prefillFormData.value = formData;
+
   nextTick().then(() => {
     if (content.value) {
       content.value.parentElement.parentElement.parentElement.scrollTop =
-        content.value.offsetHeight
+        content.value.offsetHeight;
     }
-  })
-}
+  });
+};
 </script>

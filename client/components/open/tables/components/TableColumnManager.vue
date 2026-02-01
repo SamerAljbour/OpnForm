@@ -4,7 +4,7 @@
       <UButton
         size="sm"
         variant="ghost"
-        label="Columns"
+        label="الأعمدة"
         color="neutral"
         trailing-icon="i-lucide-chevron-down"
         class="ml-auto"
@@ -16,39 +16,36 @@
           <div class="flex items-center justify-between">
             <UInput
               variant="outline"
-              placeholder="Search columns..."
+              placeholder="ابحث في الأعمدة..."
               icon="i-heroicons-magnifying-glass"
               size="sm"
               v-model="searchQuery"
             />
             <div class="flex items-center gap-1">
-            <UButton
-              size="sm"
-              variant="ghost"
-              color="neutral"
-              label="Reset"
-              @click="tableState.resetPreferences()"
-            />
-          </div>
+              <UButton
+                size="sm"
+                variant="ghost"
+                color="neutral"
+                label="إعادة تعيين"
+                @click="tableState.resetPreferences()"
+              />
+            </div>
           </div>
 
           <!-- Column Sections -->
           <ScrollableContainer class="mt-1">
             <template v-for="section in columnSections" :key="section.type">
-            <div 
-              v-if="section.columns.length > 0"
-              class="flex flex-col"
-            >
-              <div class="flex items-center justify-between">
-                <h4 class="text-xs text-neutral-500">{{ section.title }}</h4>
-                <UButton
-                  size="xs"
-                  variant="link"
-                  :label="section.actionLabel"
-                  @click="toggleAllColumns(section.targetVisibility)"
-                />
-              </div>
-              
+              <div v-if="section.columns.length > 0" class="flex flex-col">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-xs text-neutral-500">{{ section.title }}</h4>
+                  <UButton
+                    size="xs"
+                    variant="link"
+                    :label="section.actionLabel"
+                    @click="toggleAllColumns(section.targetVisibility)"
+                  />
+                </div>
+
                 <VueDraggable
                   :model-value="section.columns"
                   item-key="id"
@@ -61,16 +58,27 @@
                   @update="handleColumnUpdate"
                 >
                   <template #default>
-                    <div v-for="column in section.columns" :key="column.id" class="group">
-                      <div class="flex items-center gap-1 p-2 rounded-md hover:bg-neutral-50 transition-colors">
+                    <div
+                      v-for="column in section.columns"
+                      :key="column.id"
+                      class="group"
+                    >
+                      <div
+                        class="flex items-center gap-1 p-2 rounded-md hover:bg-neutral-50 transition-colors"
+                      >
                         <!-- Drag Handle -->
-                        <div class="w-4 h-4 flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity">
-                          <UIcon name="clarity:drag-handle-line" class="h-6 w-6 -ml-1 shrink-0 text-neutral-400" />
+                        <div
+                          class="w-4 h-4 flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity"
+                        >
+                          <UIcon
+                            name="clarity:drag-handle-line"
+                            class="h-6 w-6 -ml-1 shrink-0 text-neutral-400"
+                          />
                         </div>
 
                         <!-- Column Icon -->
                         <div class="w-4 h-4 flex items-center justify-center">
-                          <BlockTypeIcon 
+                          <BlockTypeIcon
                             v-if="column.type"
                             :type="column.type"
                             bg-class="bg-transparent"
@@ -80,15 +88,25 @@
                         </div>
 
                         <!-- Column Name with Tooltip -->
-                        <UTooltip :text="column.header || column.id" :content="{ align: 'start' }">
+                        <UTooltip
+                          :text="column.header || column.id"
+                          :content="{ align: 'start' }"
+                        >
                           <span class="flex-1 text-sm truncate">
                             {{ column.header || column.id }}
                           </span>
                         </UTooltip>
 
                         <!-- Removed Indicator -->
-                        <UTooltip v-if="column.isRemoved" text="Column was removed from form" :content="{ align: 'end' }">
-                          <UIcon name="i-heroicons-trash" class="w-3 h-3 text-neutral-400" />
+                        <UTooltip
+                          v-if="column.isRemoved"
+                          text="Column was removed from form"
+                          :content="{ align: 'end' }"
+                        >
+                          <UIcon
+                            name="i-heroicons-trash"
+                            class="w-3 h-3 text-neutral-400"
+                          />
                         </UTooltip>
 
                         <!-- Column Actions -->
@@ -97,32 +115,70 @@
                           <UTooltip :text="getPinTooltip(column.id)">
                             <UButton
                               size="xs"
-                              :variant="columnPreferencesMap[column.id]?.pinned ? 'soft' : 'ghost'"
+                              :variant="
+                                columnPreferencesMap[column.id]?.pinned
+                                  ? 'soft'
+                                  : 'ghost'
+                              "
                               :icon="getPinIcon(column.id)"
-                              :color="columnPreferencesMap[column.id]?.pinned ? 'primary' : 'neutral'"
-                              @click.prevent="tableState.toggleColumnPin(column.id)"
+                              :color="
+                                columnPreferencesMap[column.id]?.pinned
+                                  ? 'primary'
+                                  : 'neutral'
+                              "
+                              @click.prevent="
+                                tableState.toggleColumnPin(column.id)
+                              "
                             />
                           </UTooltip>
 
                           <!-- Wrap Toggle -->
-                          <UTooltip :text="columnPreferencesMap[column.id]?.wrapped ? 'Disable text wrapping' : 'Enable text wrapping'">
+                          <UTooltip
+                            :text="
+                              columnPreferencesMap[column.id]?.wrapped
+                                ? 'تعطيل الالتفاف التلقائي للنص'
+                                : 'تمكين الالتفاف التلقائي للنص'
+                            "
+                          >
                             <UButton
                               size="xs"
-                              :variant="columnPreferencesMap[column.id]?.wrapped ? 'soft' : 'ghost'"
+                              :variant="
+                                columnPreferencesMap[column.id]?.wrapped
+                                  ? 'soft'
+                                  : 'ghost'
+                              "
                               icon="i-ic-baseline-wrap-text"
-                              :color="columnPreferencesMap[column.id]?.wrapped ? 'primary' : 'neutral'"
-                              @click.prevent="tableState.toggleColumnWrapping(column.id)"
+                              :color="
+                                columnPreferencesMap[column.id]?.wrapped
+                                  ? 'primary'
+                                  : 'neutral'
+                              "
+                              @click.prevent="
+                                tableState.toggleColumnWrapping(column.id)
+                              "
                             />
                           </UTooltip>
 
                           <!-- Visibility Toggle Button -->
-                          <UTooltip :text="columnVisibilityMap[column.id] ? 'Hide' : 'Show'">
+                          <UTooltip
+                            :text="
+                              columnVisibilityMap[column.id] ? 'إخفاء' : 'إظهار'
+                            "
+                          >
                             <UButton
                               size="xs"
                               variant="ghost"
                               color="neutral"
-                              :icon="columnVisibilityMap[column.id] ? 'i-heroicons-eye-solid' : 'i-heroicons-eye-slash-solid'"
-                              @click.prevent="props.tableState.toggleColumnVisibility(column.id)"
+                              :icon="
+                                columnVisibilityMap[column.id]
+                                  ? 'i-heroicons-eye-solid'
+                                  : 'i-heroicons-eye-slash-solid'
+                              "
+                              @click.prevent="
+                                props.tableState.toggleColumnVisibility(
+                                  column.id,
+                                )
+                              "
                             />
                           </UTooltip>
                         </div>
@@ -130,8 +186,8 @@
                     </div>
                   </template>
                 </VueDraggable>
-            </div>
-          </template>
+              </div>
+            </template>
           </ScrollableContainer>
           <div class="w-full h-1"></div>
         </div>
@@ -141,9 +197,9 @@
 </template>
 
 <script setup>
-import { VueDraggable } from 'vue-draggable-plus'
-import BlockTypeIcon from '~/components/open/forms/components/BlockTypeIcon.vue'
-import ScrollableContainer from '~/components/dashboard/ScrollableContainer.vue'
+import { VueDraggable } from "vue-draggable-plus";
+import BlockTypeIcon from "~/components/open/forms/components/BlockTypeIcon.vue";
+import ScrollableContainer from "~/components/dashboard/ScrollableContainer.vue";
 
 const props = defineProps({
   tableState: {
@@ -153,131 +209,136 @@ const props = defineProps({
   popoverContent: {
     type: Object,
     default: () => ({
-      align: 'end',
-      side: 'bottom',
+      align: "end",
+      side: "bottom",
     }),
   },
-})
+});
 
-
-
-const isPopoverOpen = ref(false)
-const searchQuery = ref('')
+const isPopoverOpen = ref(false);
+const searchQuery = ref("");
 
 // Computed maps for better performance - avoid repeated function calls in templates
 const columnVisibilityMap = computed(() => {
-  const map = {}
-  const visibility = props.tableState.columnVisibility.value || {}
-  const columns = props.tableState.orderedColumns.value || []
-  
-  columns.forEach(column => {
-    map[column.id] = visibility[column.id] !== false
-  })
-  return map
-})
+  const map = {};
+  const visibility = props.tableState.columnVisibility.value || {};
+  const columns = props.tableState.orderedColumns.value || [];
+
+  columns.forEach((column) => {
+    map[column.id] = visibility[column.id] !== false;
+  });
+  return map;
+});
 
 const columnPreferencesMap = computed(() => {
-  const map = {}
-  const columns = props.tableState.orderedColumns.value || []
-  
-  columns.forEach(column => {
-    map[column.id] = props.tableState.getColumnPreference(column.id)
-  })
-  return map
-})
+  const map = {};
+  const columns = props.tableState.orderedColumns.value || [];
 
-
+  columns.forEach((column) => {
+    map[column.id] = props.tableState.getColumnPreference(column.id);
+  });
+  return map;
+});
 
 // Filter columns based on search query and maintain order
 const filteredColumns = computed(() => {
-  const columns = props.tableState.orderedColumns.value || []
-  if (!Array.isArray(columns)) return []
-  
-  const query = searchQuery.value.toLowerCase()
-  return columns.filter(column => 
-    column.id !== 'actions' && 
-    (column.header || column.id).toLowerCase().includes(query)
-  )
-})
+  const columns = props.tableState.orderedColumns.value || [];
+  if (!Array.isArray(columns)) return [];
+
+  const query = searchQuery.value.toLowerCase();
+  return columns.filter(
+    (column) =>
+      column.id !== "actions" &&
+      (column.header || column.id).toLowerCase().includes(query),
+  );
+});
 
 // Computed visible columns (reactive to table state) - now using the map
 const visibleColumns = computed(() => {
-  const visibilityMap = columnVisibilityMap.value
-  return filteredColumns.value.filter(column => visibilityMap[column.id] !== false)
-})
+  const visibilityMap = columnVisibilityMap.value;
+  return filteredColumns.value.filter(
+    (column) => visibilityMap[column.id] !== false,
+  );
+});
 
 // Computed hidden columns (reactive to table state) - now using the map
 const hiddenColumns = computed(() => {
-  const visibilityMap = columnVisibilityMap.value
-  return filteredColumns.value.filter(column => visibilityMap[column.id] === false)
-})
+  const visibilityMap = columnVisibilityMap.value;
+  return filteredColumns.value.filter(
+    (column) => visibilityMap[column.id] === false,
+  );
+});
 
 // Column sections configuration (now fully reactive)
 const columnSections = computed(() => {
   return [
     {
-      type: 'visible',
-      title: 'Shown in table',
-      actionLabel: 'Hide All',
+      type: "visible",
+      title: "معروض في الجدول",
+      actionLabel: "إخفاء الكل",
       targetVisibility: false,
-      columns: visibleColumns.value
+      columns: visibleColumns.value,
     },
     {
-      type: 'hidden',
-      title: 'Hidden in table',
-      actionLabel: 'Show All',
+      type: "hidden",
+      title: "Hidden in table",
+      actionLabel: "إظهار الكل",
       targetVisibility: true,
-      columns: hiddenColumns.value
-    }
-  ]
-})
+      columns: hiddenColumns.value,
+    },
+  ];
+});
 
 // Handle drag end event
 const handleColumnAdd = async (evt) => {
-  const column = evt.data || evt.clonedData
-  if (!column) return
-  const isVisibleTarget = evt.to?.dataset?.sectionType === 'visible'
+  const column = evt.data || evt.clonedData;
+  if (!column) return;
+  const isVisibleTarget = evt.to?.dataset?.sectionType === "visible";
   if (isVisibleTarget) {
-    props.tableState.toggleColumnVisibility(column.id)
-    await nextTick()
-    props.tableState.setColumnOrder(column.id, evt.newIndex)
+    props.tableState.toggleColumnVisibility(column.id);
+    await nextTick();
+    props.tableState.setColumnOrder(column.id, evt.newIndex);
   } else {
     // Moved into hidden
-    props.tableState.toggleColumnVisibility(column.id)
+    props.tableState.toggleColumnVisibility(column.id);
   }
-}
+};
 
 const handleColumnUpdate = (evt) => {
-  const column = evt.data
-  if (!column) return
-  props.tableState.setColumnOrder(column.id, evt.newIndex)
-}
+  const column = evt.data;
+  if (!column) return;
+  props.tableState.setColumnOrder(column.id, evt.newIndex);
+};
 
 // Get pin icon - now using computed map
 const getPinIcon = (columnId) => {
-  const pref = columnPreferencesMap.value[columnId]
-  return pref?.pinned === 'left' ? 'i-ic-baseline-push-pin' : 'i-ic-baseline-push-pin'
-}
+  const pref = columnPreferencesMap.value[columnId];
+  return pref?.pinned === "left"
+    ? "i-ic-baseline-push-pin"
+    : "i-ic-baseline-push-pin";
+};
 
 // Get pin tooltip - now using computed map
 const getPinTooltip = (columnId) => {
-  const pref = columnPreferencesMap.value[columnId]
-  return pref?.pinned === 'left' ? 'Unpin column' : 'Pin column to left'
-}
+  const pref = columnPreferencesMap.value[columnId];
+  return pref?.pinned === "left"
+    ? "إلغاء تثبيت العمود"
+    : "تثبيت العمود على اليسار";
+};
 
 // Toggle all columns visibility - now using computed map
 const toggleAllColumns = (targetVisibility) => {
-  const columns = props.tableState.orderedColumns.value || []
-  const visibilityMap = columnVisibilityMap.value
-  
+  const columns = props.tableState.orderedColumns.value || [];
+  const visibilityMap = columnVisibilityMap.value;
+
   columns
-    .filter(column => column.id !== 'actions')
-    .forEach(column => {
+    .filter((column) => column.id !== "actions")
+    .forEach((column) => {
       if ((visibilityMap[column.id] !== false) !== targetVisibility) {
-        props.tableState.toggleColumnVisibility(column.id)
+        props.tableState.toggleColumnVisibility(column.id);
       }
-    })
-}
+    });
+};
 </script>
 
 <style scoped>

@@ -1,11 +1,13 @@
 <template>
   <VForm size="sm">
     <div class="space-y-4">
-      <div class="flex flex-col flex-wrap items-start justify-between gap-4 sm:flex-row sm:items-center">
+      <div
+        class="flex flex-col flex-wrap items-start justify-between gap-4 sm:flex-row sm:items-center"
+      >
         <div>
-          <h3 class="text-lg font-medium text-neutral-900">General</h3>
+          <h3 class="text-lg font-medium text-neutral-900">عام</h3>
           <p class="mt-1 text-sm text-neutral-500">
-            Basic information about your form.
+            المعلومات الأساسية الخاصة بالنموذج.
           </p>
         </div>
       </div>
@@ -14,29 +16,32 @@
         :form="form"
         name="title"
         class="mt-4 max-w-xs"
-        label="Form Name"
-        placeholder="My form"
+        label="اسم النموذج"
+        placeholder="نموذجي"
       />
+
       <select-input
         name="tags"
-        label="Tags"
+        label="الوسوم"
         clearable
         :form="form"
-        help="To organize your forms"
-        placeholder="Select Tag(s)"
+        help="لتنظيم النماذج الخاصة بك"
+        placeholder="اختر وسمًا أو أكثر"
         class="max-w-xs"
         :multiple="true"
         :allow-creation="true"
         :options="allTagsOptions"
       />
+
       <flat-select-input
         name="visibility"
-        label="Form Visibility"
+        label="حالة النموذج"
         class="max-w-xs"
         :form="form"
-        placeholder="Select Visibility"
+        placeholder="اختر حالة النموذج"
         :options="visibilityOptions"
       />
+
       <div
         v-if="isFormClosingOrClosed"
         class="bg-neutral-50 border rounded-lg px-4 py-2"
@@ -45,8 +50,8 @@
           name="closed_text"
           :allow-fullscreen="true"
           :form="form"
-          label="Closed form text"
-          help="This message will be shown when the form will be closed"
+          label="نص إغلاق النموذج"
+          help="سيتم عرض هذه الرسالة عند إغلاق النموذج"
           :required="false"
           wrapper-class="mb-0"
         />
@@ -60,44 +65,41 @@
         icon="i-heroicons-document-duplicate"
         @click.prevent="showCopyFormSettingsModal = true"
       >
-        Copy another form's settings
+        نسخ إعدادات نموذج آخر
       </UButton>
     </div>
   </VForm>
-    
+
   <UModal
     v-model:open="showCopyFormSettingsModal"
     @close="showCopyFormSettingsModal = false"
   >
     <template #header>
       <div class="flex items-center w-full gap-4 px-2">
-        <h2 class="text-lg font-semibold">
-          Import Settings from another form
-        </h2>
+        <h2 class="text-lg font-semibold">استيراد الإعدادات من نموذج آخر</h2>
       </div>
     </template>
+
     <template #body>
       <VForm size="sm">
         <select-input
           v-model="copyFormId"
           name="copy_form_id"
-          label="Copy Settings From"
-          placeholder="Choose a form"
+          label="نسخ الإعدادات من"
+          placeholder="اختر نموذجًا"
           :searchable="copyFormOptions.length > 5"
           :options="copyFormOptions"
         />
+
         <div class="mt-4 flex items-center justify-between">
-          <UButton
-            @click="copySettings"
-          >
-            Confirm & Copy
-          </UButton>
+          <UButton @click="copySettings"> تأكيد ونسخ </UButton>
+
           <UButton
             color="neutral"
             variant="outline"
             @click="showCopyFormSettingsModal = false"
           >
-            Cancel
+            إلغاء
           </UButton>
         </div>
       </VForm>
@@ -106,93 +108,95 @@
 </template>
 
 <script setup>
-import clonedeep from 'clone-deep'
-import { default as _has } from 'lodash/has'
+import clonedeep from "clone-deep";
+import { default as _has } from "lodash/has";
 
-const alert = useAlert()
-const workingFormStore = useWorkingFormStore()
-const { content: form } = storeToRefs(workingFormStore)
+const alert = useAlert();
+const workingFormStore = useWorkingFormStore();
+const { content: form } = storeToRefs(workingFormStore);
 
 // Get forms list for current workspace
-const { currentId: workspaceId } = useCurrentWorkspace()
+const { currentId: workspaceId } = useCurrentWorkspace();
 const { forms } = useFormsList(workspaceId, {
-  enabled: computed(() => !!workspaceId.value)
-})
+  enabled: computed(() => !!workspaceId.value),
+});
 
 // Reactive state
-const showCopyFormSettingsModal = ref(false)
-const copyFormId = ref(null)
+const showCopyFormSettingsModal = ref(false);
+const copyFormId = ref(null);
 
 // Computed properties
 const visibilityOptions = [
   {
-    name: 'Published',
-    value: 'public',
+    name: "منشور",
+    value: "public",
   },
   {
-    name: 'Draft - not publicly accessible',
-    value: 'draft',
+    name: "مسودة - غير متاح للعامة",
+    value: "draft",
   },
   {
-    name: 'Closed - won\'t accept new submissions',
-    value: 'closed',
+    name: "مغلق - لن يقبل تقديمًا جديدًا",
+    value: "closed",
   },
-]
+];
 
 const copyFormOptions = computed(() => {
-  if (!forms.value) return []
+  if (!forms.value) return [];
   return forms.value
     .filter((formItem) => {
-      return form.value.id !== formItem.id
+      return form.value.id !== formItem.id;
     })
     .map((formItem) => {
       return {
         name: formItem.title,
         value: formItem.id,
-      }
-    })
-})
+      };
+    });
+});
 
 const allTagsOptions = computed(() => {
-  if (!forms.value) return []
-  
+  if (!forms.value) return [];
+
   // Extract all unique tags from forms
-  let tags = []
+  let tags = [];
   forms.value.forEach((formItem) => {
     if (formItem.tags && formItem.tags.length) {
-      if (typeof formItem.tags === "string" || formItem.tags instanceof String) {
-        tags = tags.concat(formItem.tags.split(","))
+      if (
+        typeof formItem.tags === "string" ||
+        formItem.tags instanceof String
+      ) {
+        tags = tags.concat(formItem.tags.split(","));
       } else if (Array.isArray(formItem.tags)) {
-        tags = tags.concat(formItem.tags)
+        tags = tags.concat(formItem.tags);
       }
     }
-  })
-  
+  });
+
   return [...new Set(tags)].map((tagname) => {
     return {
       name: tagname,
       value: tagname,
-    }
-  })
-})
+    };
+  });
+});
 
 // New computed property for v-if condition
 const isFormClosingOrClosed = computed(() => {
-  return form.value.closes_at || form.value.visibility === 'closed'
-})
+  return form.value.closes_at || form.value.visibility === "closed";
+});
 
 // Methods
 const copySettings = () => {
   if (copyFormId.value == null) {
-    alert.error('Please select a form to copy settings from')
-    return
+    alert.error("Please select a form to copy settings from");
+    return;
   }
 
   const copyForm = clonedeep(
-    forms.value?.find(form => form.id === copyFormId.value),
-  )
-  if (!copyForm)
-    return;
+    forms.value?.find((form) => form.id === copyFormId.value),
+  );
+  if (!copyForm) return;
 
   // Clean copy from form
   [
@@ -215,15 +219,14 @@ const copySettings = () => {
     "deleted_at",
     "last_edited_human",
   ].forEach((property) => {
-    if (_has(copyForm, property))
-      delete copyForm[property]
-  })
+    if (_has(copyForm, property)) delete copyForm[property];
+  });
 
   // Apply changes
   Object.keys(copyForm).forEach((property) => {
-    form.value[property] = copyForm[property]
-  })
-  showCopyFormSettingsModal.value = false
-  alert.success('Form settings copied.')
-}
+    form.value[property] = copyForm[property];
+  });
+  showCopyFormSettingsModal.value = false;
+  alert.success("Form settings copied.");
+};
 </script>

@@ -1,11 +1,15 @@
 <template>
   <VForm size="sm">
     <div class="space-y-4">
-      <div class="flex flex-col flex-wrap items-start justify-between gap-4 sm:flex-row sm:items-center">
+      <div
+        class="flex flex-col flex-wrap items-start justify-between gap-4 sm:flex-row sm:items-center"
+      >
         <div>
-          <h3 class="text-lg font-medium text-neutral-900">Security & Access</h3>
+          <h3 class="text-lg font-medium text-neutral-900">
+            الأمان وإمكانية الوصول
+          </h3>
           <p class="mt-1 text-sm text-neutral-500">
-            Manage who can access your form and when.
+            إدارة من يمكنه الوصول إلى النموذج ومتى.
           </p>
         </div>
       </div>
@@ -14,19 +18,21 @@
         name="password"
         :form="form"
         class="mt-4 max-w-xs"
-        label="Form Password"
+        label="كلمة مرور النموذج"
         placeholder="********"
-        help="Leave empty to disable password protection"
+        help="اترك الحقل فارغًا لتعطيل حماية كلمة المرور"
       />
+
       <DateInput
         :with-time="true"
         name="closes_at"
         class="mt-4 max-w-xs"
         :form="form"
-        label="Closing date"
-        help="Leave empty to keep the form open indefinitely"
+        label="تاريخ الإغلاق"
+        help="اتركه فارغًا ليبقى النموذج مفتوحًا بدون تاريخ انتهاء"
         :required="false"
       />
+
       <div
         v-if="form.closes_at || form.visibility == 'closed'"
         class="bg-neutral-50 border rounded-lg px-4 py-2"
@@ -35,23 +41,25 @@
           name="closed_text"
           :form="form"
           :allow-fullscreen="true"
-          label="Closed form text"
-          help="This message will be shown when the form will be closed"
+          label="نص إغلاق النموذج"
+          help="سيتم عرض هذه الرسالة عند إغلاق النموذج"
           :required="false"
           wrapper-class="mb-0"
         />
       </div>
+
       <text-input
         name="max_submissions_count"
         native-type="number"
         :min="1"
         :form="form"
-        label="Limit number of submissions"
-        placeholder="Max submissions"
+        label="تحديد عدد الردود"
+        placeholder="الحد الأقصى للردود"
         class="mt-4 max-w-xs"
-        help="Leave empty for unlimited submissions"
+        help="اتركه فارغًا لعدد غير محدود من الردود"
         :required="false"
       />
+
       <div
         v-if="form.max_submissions_count && form.max_submissions_count > 0"
         class="bg-neutral-50 border rounded-lg px-4 py-2"
@@ -61,36 +69,31 @@
           :allow-fullscreen="true"
           name="max_submissions_reached_text"
           :form="form"
-          label="Max Submissions reached text"
-          help="This message will be shown when the form will have the maximum number of submissions"
+          label="نص الوصول للحد الأقصى للردود"
+          help="سيتم عرض هذه الرسالة عند الوصول إلى الحد الأقصى لعدد الردود"
           :required="false"
         />
       </div>
 
-      <h4 class="font-semibold mt-4 border-t pt-4">
-        Security
-      </h4>
-      <p class="text-neutral-500 text-sm">
-        Protect your form, and your sensitive files.
-      </p>
-      <div
-        v-if="hasCaptcha"
-        class="flex items-start gap-6 flex-wrap"
-      >
+      <h4 class="font-semibold mt-4 border-t pt-4">الأمان</h4>
+      <p class="text-neutral-500 text-sm">حماية النموذج والملفات الحساسة.</p>
+
+      <div v-if="hasCaptcha" class="flex items-start gap-6 flex-wrap">
         <ToggleSwitchInput
           name="use_captcha"
           :form="form"
           class="mt-4"
-          label="Bot Protection"
-          help="Protects your form from spam and abuse with a captcha"
+          label="الحماية من البوتات"
+          help="يحمي النموذج من الرسائل المزعجة وسوء الاستخدام باستخدام كابتشا"
         />
+
         <FlatSelectInput
           v-if="form.use_captcha"
           name="captcha_provider"
           :form="form"
           :options="captchaOptions"
           class="mt-4 w-80"
-          label="Select a captcha provider"
+          label="اختر مزود الكابتشا"
         />
       </div>
     </div>
@@ -98,25 +101,25 @@
 </template>
 
 <script setup>
-const workingFormStore = useWorkingFormStore()
-const { content: form } = storeToRefs(workingFormStore)
-const config = useRuntimeConfig()
+const workingFormStore = useWorkingFormStore();
+const { content: form } = storeToRefs(workingFormStore);
+const config = useRuntimeConfig();
 
 const hasCaptcha = computed(() => {
-  return config.public.hCaptchaSiteKey || config.public.reCaptchaSiteKey
-})
+  return config.public.hCaptchaSiteKey || config.public.reCaptchaSiteKey;
+});
 
 const captchaOptions = computed(() => {
-  const options = []
-  
+  const options = [];
+
   if (config.public.reCaptchaSiteKey) {
-    options.push({ name: 'reCAPTCHA', value: 'recaptcha' })
+    options.push({ name: "reCAPTCHA", value: "recaptcha" });
   }
-  
+
   if (config.public.hCaptchaSiteKey) {
-    options.push({ name: 'hCaptcha', value: 'hcaptcha' })
+    options.push({ name: "hCaptcha", value: "hcaptcha" });
   }
-  
-  return options
-})
+
+  return options;
+});
 </script>

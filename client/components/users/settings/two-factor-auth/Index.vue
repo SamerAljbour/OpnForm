@@ -1,19 +1,19 @@
 <template>
   <div class="space-y-4">
     <div>
-      <h3 class="text-lg font-medium text-neutral-900">Two-Factor Authentication</h3>
+      <h3 class="text-lg font-medium text-neutral-900">التحقق بخطوتين</h3>
       <p class="text-sm text-neutral-500 mt-1">
-        Add an extra layer of security to your account using an authenticator app.
+        أضف طبقة أمان إضافية إلى حسابك باستخدام تطبيق المصادقة.
       </p>
     </div>
 
-    <!-- 2FA Status -->
+    <!-- حالة التحقق بخطوتين -->
     <div v-if="twoFactorEnabled" class="space-y-4">
       <UAlert
         color="success"
         variant="subtle"
         icon="i-heroicons-check-circle"
-        description="Two-factor authentication is enabled on your account."
+        description="تم تفعيل التحقق بخطوتين على حسابك."
       />
 
       <div class="flex gap-2">
@@ -22,19 +22,19 @@
           variant="outline"
           @click="showRegenerateModal = true"
         >
-          Regenerate Recovery Codes
+          إعادة توليد رموز الاسترداد
         </UButton>
         <UButton
           color="neutral"
           variant="outline"
           @click="showDisableModal = true"
         >
-          Disable 2FA
+          تعطيل التحقق بخطوتين
         </UButton>
       </div>
     </div>
 
-    <!-- Enable 2FA Flow -->
+    <!-- تفعيل التحقق بخطوتين -->
     <TwoFactorEnableFlow
       v-else
       :enabling="enabling2FA"
@@ -45,7 +45,7 @@
       @confirm="confirmTwoFactor"
     />
 
-    <!-- Recovery Codes Modal (shown after setup or regeneration) -->
+    <!-- نافذة رموز الاسترداد (بعد الإعداد أو إعادة التوليد) -->
     <RecoveryCodesModal
       :show="showRecoveryCodesModal"
       :codes="recoveryCodesList"
@@ -54,7 +54,7 @@
       @copy="copyRecoveryCodes"
     />
 
-    <!-- Regenerate Recovery Codes Modal -->
+    <!-- نافذة إعادة توليد رموز الاسترداد -->
     <RegenerateRecoveryCodesModal
       :show="showRegenerateModal"
       :loading="regeneratingCodes"
@@ -62,7 +62,7 @@
       @regenerate="handleRegenerateRecoveryCodes"
     />
 
-    <!-- Disable 2FA Modal -->
+    <!-- نافذة تعطيل التحقق بخطوتين -->
     <DisableTwoFactorModal
       :show="showDisableModal"
       :loading="disabling2FA"
@@ -73,126 +73,142 @@
 </template>
 
 <script setup>
-import { authApi } from '~/api/auth'
-import TwoFactorEnableFlow from './TwoFactorEnableFlow.vue'
-import RecoveryCodesModal from './RecoveryCodesModal.vue'
-import DisableTwoFactorModal from './DisableTwoFactorModal.vue'
-import RegenerateRecoveryCodesModal from './RegenerateRecoveryCodesModal.vue'
+import { authApi } from "~/api/auth";
+import TwoFactorEnableFlow from "./TwoFactorEnableFlow.vue";
+import RecoveryCodesModal from "./RecoveryCodesModal.vue";
+import DisableTwoFactorModal from "./DisableTwoFactorModal.vue";
+import RegenerateRecoveryCodesModal from "./RegenerateRecoveryCodesModal.vue";
 
-const alert = useAlert()
-const auth = useAuth()
-const { data: user } = auth.user()
+const alert = useAlert();
+const auth = useAuth();
+const { data: user } = auth.user();
 
 // Two-Factor Authentication
-const twoFactorEnabled = computed(() => user.value?.two_factor_enabled ?? false)
-const twoFactorSecret = ref(null)
-const twoFactorQrCode = ref(null)
-const recoveryCodesList = ref([])
-const showRecoveryCodesModal = ref(false)
-const showDisableModal = ref(false)
-const showRegenerateModal = ref(false)
+const twoFactorEnabled = computed(
+  () => user.value?.two_factor_enabled ?? false,
+);
+const twoFactorSecret = ref(null);
+const twoFactorQrCode = ref(null);
+const recoveryCodesList = ref([]);
+const showRecoveryCodesModal = ref(false);
+const showDisableModal = ref(false);
+const showRegenerateModal = ref(false);
 
-const enabling2FA = ref(false)
-const confirming2FA = ref(false)
-const disabling2FA = ref(false)
-const regeneratingCodes = ref(false)
-const justRegenerated = ref(false)
+const enabling2FA = ref(false);
+const confirming2FA = ref(false);
+const disabling2FA = ref(false);
+const regeneratingCodes = ref(false);
+const justRegenerated = ref(false);
 
 const enableTwoFactor = async () => {
-  enabling2FA.value = true
+  enabling2FA.value = true;
   try {
-    const response = await authApi.twoFactor.enable()
-    twoFactorSecret.value = response.secret
-    twoFactorQrCode.value = response.qr_code
+    const response = await authApi.twoFactor.enable();
+    twoFactorSecret.value = response.secret;
+    twoFactorQrCode.value = response.qr_code;
   } catch (error) {
-    alert.error(error.response?._data?.message || 'Failed to enable two-factor authentication')
+    alert.error(
+      error.response?._data?.message ||
+        "فشل تفعيل التحقق بخطوتين. حاول مرة أخرى.",
+    );
   } finally {
-    enabling2FA.value = false
+    enabling2FA.value = false;
   }
-}
+};
 
 const confirmTwoFactor = async (code) => {
-  confirming2FA.value = true
+  confirming2FA.value = true;
   try {
-    const response = await authApi.twoFactor.confirm({ code })
-    
-    recoveryCodesList.value = response.recovery_codes || []
-    twoFactorSecret.value = null
-    twoFactorQrCode.value = null
-    
+    const response = await authApi.twoFactor.confirm({ code });
+
+    recoveryCodesList.value = response.recovery_codes || [];
+    twoFactorSecret.value = null;
+    twoFactorQrCode.value = null;
+
     // Refresh user data
-    await auth.invalidateUser()
-    
+    await auth.invalidateUser();
+
     // Show recovery codes modal automatically after enabling
-    justRegenerated.value = false
-    showRecoveryCodesModal.value = true
-    
-    alert.success('Two-factor authentication has been enabled successfully.')
+    justRegenerated.value = false;
+    showRecoveryCodesModal.value = true;
+
+    alert.success("تم تفعيل التحقق بخطوتين بنجاح.");
   } catch (error) {
-    alert.error(error.response?._data?.message || error.response?._data?.errors?.code?.[0] || 'Invalid code. Please try again.')
+    alert.error(
+      error.response?._data?.message ||
+        error.response?._data?.errors?.code?.[0] ||
+        "رمز غير صحيح. يرجى المحاولة مرة أخرى.",
+    );
   } finally {
-    confirming2FA.value = false
+    confirming2FA.value = false;
   }
-}
+};
 
 const disableTwoFactor = async (code) => {
-  disabling2FA.value = true
+  disabling2FA.value = true;
   try {
-    await authApi.twoFactor.disable({ code })
-    
-    showDisableModal.value = false
-    
+    await authApi.twoFactor.disable({ code });
+
+    showDisableModal.value = false;
+
     // Refresh user data
-    await auth.invalidateUser()
-    
-    alert.success('Two-factor authentication has been disabled.')
+    await auth.invalidateUser();
+
+    alert.success("تم تعطيل التحقق بخطوتين بنجاح.");
   } catch (error) {
-    alert.error(error.response?._data?.message || error.response?._data?.errors?.code?.[0] || 'Invalid code. Please try again.')
+    alert.error(
+      error.response?._data?.message ||
+        error.response?._data?.errors?.code?.[0] ||
+        "رمز غير صحيح. يرجى المحاولة مرة أخرى.",
+    );
   } finally {
-    disabling2FA.value = false
+    disabling2FA.value = false;
   }
-}
+};
 
 const closeRecoveryCodesModal = () => {
-  recoveryCodesList.value = []
-  justRegenerated.value = false
-  showRecoveryCodesModal.value = false
-}
+  recoveryCodesList.value = [];
+  justRegenerated.value = false;
+  showRecoveryCodesModal.value = false;
+};
 
 const closeRegenerateModal = () => {
-  showRegenerateModal.value = false
-}
+  showRegenerateModal.value = false;
+};
 
 const closeDisableModal = () => {
-  showDisableModal.value = false
-}
+  showDisableModal.value = false;
+};
 
 const handleRegenerateRecoveryCodes = async (data) => {
-  regeneratingCodes.value = true
+  regeneratingCodes.value = true;
   try {
-    const response = await authApi.twoFactor.regenerateRecoveryCodes(data)
-    recoveryCodesList.value = response.recovery_codes || []
-    justRegenerated.value = true
-    showRegenerateModal.value = false
-    showRecoveryCodesModal.value = true
-    alert.success('Recovery codes have been regenerated. Please save them in a safe place.')
+    const response = await authApi.twoFactor.regenerateRecoveryCodes(data);
+    recoveryCodesList.value = response.recovery_codes || [];
+    justRegenerated.value = true;
+    showRegenerateModal.value = false;
+    showRecoveryCodesModal.value = true;
+    alert.success("تم إعادة توليد رموز الاسترداد. يرجى حفظها في مكان آمن.");
   } catch (error) {
-    alert.error(error.response?._data?.message || error.response?._data?.errors?.code?.[0] || 'Failed to regenerate recovery codes')
+    alert.error(
+      error.response?._data?.message ||
+        error.response?._data?.errors?.code?.[0] ||
+        "فشل إعادة توليد رموز الاسترداد. حاول مرة أخرى.",
+    );
   } finally {
-    regeneratingCodes.value = false
+    regeneratingCodes.value = false;
   }
-}
+};
 
-const { copy: copyToClipboard } = useClipboard()
+const { copy: copyToClipboard } = useClipboard();
 
 const copyRecoveryCodes = () => {
   // Extract just the codes from objects
-  const codes = recoveryCodesList.value.map(item => 
-    typeof item === 'string' ? item : item.code
-  )
-  const codesText = codes.join('\n')
-  copyToClipboard(codesText)
-  alert.success('Recovery codes copied to clipboard')
-}
+  const codes = recoveryCodesList.value.map((item) =>
+    typeof item === "string" ? item : item.code,
+  );
+  const codesText = codes.join("\n");
+  copyToClipboard(codesText);
+  alert.success("تم نسخ رموز الاسترداد إلى الحافظة");
+};
 </script>
-

@@ -23,16 +23,19 @@
           :min="minSlider"
           :max="maxSlider"
           :step="stepSlider"
-        >
-          <div class="grid grid-cols-3 gap-2 -mt-1">
-            <div
-              v-for="(i, idx) in sliderLabelsList"
-              :key="i.label ?? idx"
-              :class="[ui.stepLabel({ class: props.ui?.slots?.stepLabel }), i.style]"
-            >
-              {{ i.label }}
-            </div>
+        />
+        <div class="grid grid-cols-3 gap-2 -mt-1">
+          <div
+            v-for="(i, idx) in sliderLabelsList"
+            :key="i.label ?? idx"
+            :class="[
+              ui.stepLabel({ class: props.ui?.slots?.stepLabel }),
+              i.style,
+            ]"
+          >
+            <!-- {{ i.label }} -->
           </div>
+        </div>
       </div>
     </div>
 
@@ -46,12 +49,12 @@
 </template>
 
 <script>
-import { inputProps, useFormInput } from "../useFormInput.js"
-import { sliderInputTheme } from "~/lib/forms/themes/slider-input.theme.js"
+import { inputProps, useFormInput } from "../useFormInput.js";
+import { sliderInputTheme } from "~/lib/forms/themes/slider-input.theme.js";
 
 export default {
   name: "SliderInput",
-  components: { },
+  components: {},
 
   props: {
     ...inputProps,
@@ -65,34 +68,37 @@ export default {
     const formInput = useFormInput(props, context, {
       variants: sliderInputTheme,
       additionalVariants: {
-        disabled: props.disabled
-      }
-    })
+        disabled: props.disabled,
+      },
+    });
 
     return {
       ...formInput,
-      props
-    }
+      props,
+    };
   },
   data() {
     return {
       inputWidth: 0,
-    }
+    };
   },
   computed: {
     labelStyle() {
       const ratio =
-        (Number(this.compVal) - this.minSlider) / (this.maxSlider - this.minSlider)
-      const width = this.inputWidth || (this.$refs.range ? this.$refs.range.offsetWidth : 0)
-      let x = (ratio * (width - this.thumbSize)) + (this.thumbSize / 2)
-      if (x < 0) x = 0
+        (Number(this.compVal) - this.minSlider) /
+        (this.maxSlider - this.minSlider);
+      const width =
+        this.inputWidth ||
+        (this.$refs.range ? this.$refs.range.offsetWidth : 0);
+      let x = ratio * (width - this.thumbSize) + this.thumbSize / 2;
+      if (x < 0) x = 0;
       return {
         left: `${x}px`,
-        transform: 'translateX(-50%)',
-      }
+        transform: "translateX(-50%)",
+      };
     },
     sliderLabelsList() {
-      const midPoint = (this.maxSlider - this.minSlider) / 2 + this.minSlider
+      const midPoint = (this.maxSlider - this.minSlider) / 2 + this.minSlider;
       const labels = [
         {
           label: `${this.minSlider}`,
@@ -106,36 +112,43 @@ export default {
           label: `${this.maxSlider}`,
           style: "flex items-center justify-end",
         },
-      ]
-      return labels
+      ];
+      return labels;
     },
   },
   mounted() {
     // Initialize only if no value provided; don't override an existing model value
-    if (this.compVal === undefined || this.compVal === null || isNaN(Number(this.compVal))) {
-      const initial = (this.modelValue !== undefined && this.modelValue !== null && !isNaN(Number(this.modelValue)))
-        ? Number(this.modelValue)
-        : 0
-      this.compVal = initial
+    if (
+      this.compVal === undefined ||
+      this.compVal === null ||
+      isNaN(Number(this.compVal))
+    ) {
+      const initial =
+        this.modelValue !== undefined &&
+        this.modelValue !== null &&
+        !isNaN(Number(this.modelValue))
+          ? Number(this.modelValue)
+          : 0;
+      this.compVal = initial;
     }
-    this.updateInputWidth()
-    window.addEventListener('resize', this.updateInputWidth)
+    this.updateInputWidth();
+    window.addEventListener("resize", this.updateInputWidth);
   },
   beforeUnmount() {
-    window.removeEventListener('resize', this.updateInputWidth)
+    window.removeEventListener("resize", this.updateInputWidth);
   },
   methods: {
     updateInputWidth() {
       this.$nextTick(() => {
-        this.inputWidth = this.$refs.range ? this.$refs.range.offsetWidth : 0
-      })
-    }
-  }
-}
+        this.inputWidth = this.$refs.range ? this.$refs.range.offsetWidth : 0;
+      });
+    },
+  },
+};
 </script>
 
 <style>
-  .slider {
-    accent-color: var(--thumb-color);
-  }
+.slider {
+  accent-color: var(--thumb-color);
+}
 </style>

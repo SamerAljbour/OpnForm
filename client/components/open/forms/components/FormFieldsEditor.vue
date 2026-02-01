@@ -1,11 +1,7 @@
 <template>
   <div class="relative h-[calc(100vh-55px)] overflow-y-auto">
     <div class="flex gap-2 sticky top-0 bg-white border-b z-10 p-4">
-      <UTooltip
-        text="Shortcut"
-        :kbds="['meta', 'B']"
-        arrow
-      >
+      <UTooltip text="Shortcut" :kbds="['meta', 'B']" arrow>
         <UButton
           color="neutral"
           variant="subtle"
@@ -13,7 +9,7 @@
           class="flex-grow justify-center"
           @click.prevent="openAddFieldSidebar"
         >
-          Add Block
+          إضافة حقل جديدة
         </UButton>
       </UTooltip>
     </div>
@@ -64,38 +60,42 @@
                 </EditableTag>
               </div>
 
-              <UTooltip arrow :text="element.hidden ? 'Show Block' : 'Hide Block'">
+              <UTooltip
+                arrow
+                :text="element.hidden ? 'عرض العنصر' : 'إخفاء العنصر'"
+              >
                 <button
                   class="hidden !cursor-pointer rounded-sm p-1 transition-colors hover:bg-blue-100 items-center justify-center"
                   :class="{
-                    'text-neutral-300 hover:text-blue-500 md:group-hover:flex': !element.hidden,
-                    'text-neutral-300 hover:text-neutral-500 md:flex': element.hidden,
+                    'text-neutral-300 hover:text-blue-500 md:group-hover:flex':
+                      !element.hidden,
+                    'text-neutral-300 hover:text-neutral-500 md:flex':
+                      element.hidden,
                   }"
                   @click="toggleHidden(element)"
                 >
                   <template v-if="!element.hidden">
-                    <Icon
-                      name="heroicons:eye-solid"
-                      class="h-5 w-5"
-                    />
+                    <Icon name="heroicons:eye-solid" class="h-5 w-5" />
                   </template>
                   <template v-else>
-                    <Icon
-                      name="heroicons:eye-slash-solid"
-                      class="h-5 w-5"
-                    />
+                    <Icon name="heroicons:eye-slash-solid" class="h-5 w-5" />
                   </template>
                 </button>
               </UTooltip>
               <UTooltip
-                v-if="element.type && typeof element.type === 'string' && !element.type.startsWith('nf-')"
-                :text="element.required ? 'Make it optional' : 'Make it required'"
+                v-if="
+                  element.type &&
+                  typeof element.type === 'string' &&
+                  !element.type.startsWith('nf-')
+                "
+                :text="element.required ? 'اجعله اختياريًا' : 'اجعله مطلوبًا'"
                 arrow
               >
                 <button
                   class="hidden cursor-pointer rounded-sm p-0.5 transition-colors hover:bg-blue-100 items-center px-1 justify-center"
                   :class="{
-                    'md:group-hover:flex text-neutral-300 hover:text-red-500': !element.required,
+                    'md:group-hover:flex text-neutral-300 hover:text-red-500':
+                      !element.required,
                     'md:flex text-red-500': element.required,
                   }"
                   @click="toggleRequired(element)"
@@ -107,15 +107,12 @@
                   </div>
                 </button>
               </UTooltip>
-              <UTooltip arrow text="Open settings">
+              <UTooltip arrow text="فتح الإعدادات">
                 <button
                   class="cursor-pointer rounded-sm p-1 transition-colors hover:bg-blue-100 text-neutral-300 hover:text-blue-500 flex items-center justify-center field-settings-button"
                   @click="editOptions(index)"
                 >
-                  <Icon
-                    name="heroicons:cog-8-tooth-solid"
-                    class="h-5 w-5"
-                  />
+                  <Icon name="heroicons:cog-8-tooth-solid" class="h-5 w-5" />
                 </button>
               </UTooltip>
             </div>
@@ -127,111 +124,111 @@
 </template>
 
 <script>
-import { VueDraggable } from 'vue-draggable-plus'
-import EditableTag from '~/components/app/EditableTag.vue'
-import BlockTypeIcon from './BlockTypeIcon.vue'
+import { VueDraggable } from "vue-draggable-plus";
+import EditableTag from "~/components/app/EditableTag.vue";
+import BlockTypeIcon from "./BlockTypeIcon.vue";
 
 export default {
-  name: 'FormFieldsEditor',
+  name: "FormFieldsEditor",
   components: {
     VueDraggable,
     EditableTag,
-    BlockTypeIcon
+    BlockTypeIcon,
   },
-  setup () {
-    const workingFormStore = useWorkingFormStore()
+  setup() {
+    const workingFormStore = useWorkingFormStore();
     return {
       workingFormStore,
-      form: storeToRefs(workingFormStore).content
-    }
+      form: storeToRefs(workingFormStore).content,
+    };
   },
 
-  data () {
-    return {
-
-    }
+  data() {
+    return {};
   },
 
   computed: {
     // Expose the form structure service created by useFormManager
-    structure () {
-      return this.workingFormStore?.structureService || null
+    structure() {
+      return this.workingFormStore?.structureService || null;
     },
     // Numeric current page index derived from the structure service
-    currentPageIndex () {
-      return this.structure?.currentPage?.value ?? 0
-    }
+    currentPageIndex() {
+      return this.structure?.currentPage?.value ?? 0;
+    },
   },
 
   mounted() {
-    this.init()
+    this.init();
   },
 
   methods: {
     init() {
       if (!this.form.properties) {
-        return
+        return;
       }
       this.form.properties = this.form.properties.map((field) => {
         // Add more field properties
-        field.placeholder = field.placeholder || null
-        field.prefill = field.prefill || null
-        field.help = field.help || null
-        field.help_position = field.help_position || "below_input"
+        field.placeholder = field.placeholder || null;
+        field.prefill = field.prefill || null;
+        field.help = field.help || null;
+        field.help_position = field.help_position || "below_input";
 
-        return field
-      })
+        return field;
+      });
     },
-    openAddFieldSidebar () {
-      this.workingFormStore.openAddFieldSidebar(null)
+    openAddFieldSidebar() {
+      this.workingFormStore.openAddFieldSidebar(null);
     },
-    editOptions (index) {
-      this.workingFormStore.openSettingsForField(index)
+    editOptions(index) {
+      this.workingFormStore.openSettingsForField(index);
     },
-    onChangeName (field, newName) {
-      field.name = newName
+    onChangeName(field, newName) {
+      field.name = newName;
     },
-    toggleHidden (field) {
-      field.hidden = !field.hidden
+    toggleHidden(field) {
+      field.hidden = !field.hidden;
       if (field.hidden) {
-        field.required = false
+        field.required = false;
       } else {
-        field.generates_uuid = false
-        field.generates_auto_increment_id = false
+        field.generates_uuid = false;
+        field.generates_auto_increment_id = false;
       }
     },
-    toggleRequired (field) {
-      field.required = !field.required
-      if (field.required)
-        field.hidden = false
+    toggleRequired(field) {
+      field.required = !field.required;
+      if (field.required) field.hidden = false;
     },
-    isBeingEdited (index) {
-      if (!this.workingFormStore?.showEditFieldSidebar) return false
-      return index === this.workingFormStore.selectedFieldIndex
+    isBeingEdited(index) {
+      if (!this.workingFormStore?.showEditFieldSidebar) return false;
+      return index === this.workingFormStore.selectedFieldIndex;
     },
-    getAbsoluteIndex (relativeIndex) {
-      if (!this.structure) return relativeIndex
-      return this.structure.getTargetDropIndex(relativeIndex, this.currentPageIndex)
+    getAbsoluteIndex(relativeIndex) {
+      if (!this.structure) return relativeIndex;
+      return this.structure.getTargetDropIndex(
+        relativeIndex,
+        this.currentPageIndex,
+      );
     },
-    handleDragAdd (evt) {
-      if (!this.structure) return
-      const targetIndex = this.getAbsoluteIndex(evt.newIndex)
-      const payload = evt?.clonedData
-      this.workingFormStore.addBlock(payload, targetIndex, false)
+    handleDragAdd(evt) {
+      if (!this.structure) return;
+      const targetIndex = this.getAbsoluteIndex(evt.newIndex);
+      const payload = evt?.clonedData;
+      this.workingFormStore.addBlock(payload, targetIndex, false);
     },
-    handleDragUpdate (evt) {
-      if (!this.structure) return
-      const oldTargetIndex = this.getAbsoluteIndex(evt.oldIndex)
-      const newTargetIndex = this.getAbsoluteIndex(evt.newIndex)
+    handleDragUpdate(evt) {
+      if (!this.structure) return;
+      const oldTargetIndex = this.getAbsoluteIndex(evt.oldIndex);
+      const newTargetIndex = this.getAbsoluteIndex(evt.newIndex);
       if (oldTargetIndex !== newTargetIndex) {
-        this.workingFormStore.moveField(oldTargetIndex, newTargetIndex)
+        this.workingFormStore.moveField(oldTargetIndex, newTargetIndex);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
-<style lang='scss'>
+<style lang="scss">
 .v-popover {
   .trigger {
     @apply truncate w-full;

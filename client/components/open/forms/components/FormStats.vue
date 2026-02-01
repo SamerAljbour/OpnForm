@@ -1,81 +1,83 @@
 <template>
   <div>
     <div class="flex flex-wrap items-end mt-5 gap-2">
-      <h3 class="flex-grow font-medium text-lg">
-        Views & Submission History
-      </h3>
+      <h3 class="flex-grow font-medium text-lg">سجل المشاهدات والإجابات</h3>
+
       <VForm size="sm">
-      <DateInput
-        :form="filterForm"
-        name="filter_date"
-        class="flex-1 !mb-0"
-        :date-range="true"
-        :disable-future-dates="true"
-        :disabled="!form.is_pro"
-      />
+        <DateInput
+          :form="filterForm"
+          name="filter_date"
+          class="flex-1 !mb-0"
+          :date-range="true"
+          :disable-future-dates="true"
+          :disabled="!form.is_pro"
+        />
       </VForm>
-      <UButton 
+
+      <UButton
         class="self-stretch mt-1"
         color="neutral"
         variant="outline"
         :disabled="!form.is_pro"
-        @click.prevent="refresh" 
-        icon="i-heroicons-arrow-path" 
+        @click.prevent="refresh"
+        icon="i-heroicons-arrow-path"
         :loading="isLoading"
       />
     </div>
+
     <div
       class="border border-neutral-300 rounded-lg shadow-xs p-4 mb-5 w-full mx-auto mt-2 select-all"
     >
-      <div
-        v-if="!form.is_pro"
-        class="relative"
-      >
+      <div v-if="!form.is_pro" class="relative">
         <div class="absolute inset-0 z-10">
-          <div class="p-5 max-w-md mx-auto flex flex-col items-center justify-center h-full">
+          <div
+            class="p-5 max-w-md mx-auto flex flex-col items-center justify-center h-full"
+          >
             <p class="text-center">
-              You need a <pro-tag
-                upgrade-modal-title="Upgrade today to access form analytics"
+              تحتاج إلى اشتراك
+              <pro-tag
+                upgrade-modal-title="قم بالترقية اليوم للوصول إلى تحليلات النموذج"
                 class="mx-1"
-              /> subscription to access your form
-              analytics.
+              />
+              للوصول إلى تحليلات النموذج.
             </p>
+
             <UButton
               class="mt-5 flex justify-center"
-              @click.prevent="openSubscriptionModal({modal_title: 'Upgrade to unlock form Analytics'})"
-              label="Subscribe"
+              @click.prevent="
+                openSubscriptionModal({
+                  modal_title: 'الترقية لفتح تحليلات النموذج',
+                })
+              "
+              label="اشترك الآن"
             />
           </div>
         </div>
+
         <img
           src="/img/pages/forms/blurred_graph.png"
-          alt="Sample Graph"
+          alt="نموذج رسم بياني"
           class="mx-auto w-full filter blur-md z-0 pointer-events-none"
-        >
+        />
       </div>
+
       <VTransition v-else name="fade">
-        <div
-          v-if="isLoading"
-          class="space-y-3"
-        >
+        <div v-if="isLoading" class="space-y-3">
           <USkeleton class="h-4 w-full" />
           <USkeleton class="h-4 w-3/4" />
           <USkeleton class="h-4 w-1/2" />
           <USkeleton class="h-32 w-full" />
         </div>
-        <LineChart
-          v-else
-          :options="chartOptions"
-          :data="chartData"
-        />
+
+        <LineChart v-else :options="chartOptions" :data="chartData" />
       </VTransition>
     </div>
   </div>
 </template>
 
 <script setup>
-import ProTag from "~/components/app/ProTag.vue"
-import { Line as LineChart } from "vue-chartjs"
+import ProTag from "~/components/app/ProTag.vue";
+import { Line as LineChart } from "vue-chartjs";
 import {
   Chart as ChartJS,
   Title,
@@ -85,7 +87,7 @@ import {
   LinearScale,
   CategoryScale,
   PointElement,
-} from "chart.js"
+} from "chart.js";
 
 ChartJS.register(
   Title,
@@ -95,41 +97,51 @@ ChartJS.register(
   LinearScale,
   CategoryScale,
   PointElement,
-)
+);
 
 const props = defineProps({
   form: {
     type: Object,
     required: true,
   },
-})
+});
 
-const { openSubscriptionModal } = useAppModals()
+const { openSubscriptionModal } = useAppModals();
 
-const toDate = new Date()
-const fromDate = new Date(toDate)
-fromDate.setDate(toDate.getDate() - 29)
+const toDate = new Date();
+const fromDate = new Date(toDate);
+fromDate.setDate(toDate.getDate() - 29);
 const filterForm = useForm({
-  filter_date: [fromDate.toISOString().split('T')[0], toDate.toISOString().split('T')[0]],
-})
+  filter_date: [
+    fromDate.toISOString().split("T")[0],
+    toDate.toISOString().split("T")[0],
+  ],
+});
 
 // Use query composables instead of manual API calls
-const { stats, invalidateStats } = useFormStats()
+const { stats, invalidateStats } = useFormStats();
 
 // Set up default date range (last 30 days)
 onMounted(() => {
-  const toDate = new Date()
-  const fromDate = new Date(toDate)
-  fromDate.setDate(toDate.getDate() - 29)
-  filterForm.filter_date = [fromDate.toISOString().split('T')[0], toDate.toISOString().split('T')[0]]
-})
+  const toDate = new Date();
+  const fromDate = new Date(toDate);
+  fromDate.setDate(toDate.getDate() - 29);
+  filterForm.filter_date = [
+    fromDate.toISOString().split("T")[0],
+    toDate.toISOString().split("T")[0],
+  ];
+});
 
 const fromDateComputed = computed(() => {
-  return filterForm.filter_date?.[0] ? filterForm.filter_date[0].split('T')[0] : null
-})
+  return filterForm.filter_date?.[0]
+    ? filterForm.filter_date[0].split("T")[0]
+    : null;
+});
 const toDateComputed = computed(() => {
-  return filterForm.filter_date?.[1] ? filterForm.filter_date[1].split('T')[0] : null
-})
+  return filterForm.filter_date?.[1]
+    ? filterForm.filter_date[1].split("T")[0]
+    : null;
+});
 
 // Get stats data using query composable
 const { data: statsData, isFetching: isQueryLoading } = stats(
@@ -137,21 +149,25 @@ const { data: statsData, isFetching: isQueryLoading } = stats(
   props.form.id,
   fromDateComputed,
   toDateComputed,
-  {enabled: computed(() => import.meta.client && props.form && props.form.is_pro)}
-)
+  {
+    enabled: computed(
+      () => import.meta.client && props.form && props.form.is_pro,
+    ),
+  },
+);
 
 // Handle loading state for SSR - show skeleton during SSR if query would run on client
 const isLoading = computed(() => {
   if (import.meta.server) {
-    return !!props.form && props.form.is_pro
+    return !!props.form && props.form.is_pro;
   }
-  return isQueryLoading.value
-})
+  return isQueryLoading.value;
+});
 
 // Refresh function to invalidate both stats and stats-details queries with current parameters
 const refresh = () => {
-  invalidateStats(props.form.id)
-}
+  invalidateStats(props.form.id);
+};
 
 // Chart configuration
 const chartOptions = {
@@ -165,7 +181,7 @@ const chartOptions = {
   },
   responsive: true,
   maintainAspectRatio: true,
-}
+};
 
 // Chart data computed from query results
 const chartData = computed(() => {
@@ -182,7 +198,7 @@ const chartData = computed(() => {
       borderColor: "rgba(16, 185, 129, 1)",
       data: statsData.value?.submissions || [],
     },
-  ]
+  ];
 
   // Add partial submissions dataset if enabled
   if (props.form.enable_partial_submissions) {
@@ -191,12 +207,12 @@ const chartData = computed(() => {
       backgroundColor: "rgba(255, 193, 7, 1)",
       borderColor: "rgba(255, 193, 7, 1)",
       data: statsData.value?.partial_submissions || [],
-    })
+    });
   }
 
   return {
     labels: Object.keys(statsData.value?.views || {}),
     datasets: baseDatasets,
-  }
-})
+  };
+});
 </script>
