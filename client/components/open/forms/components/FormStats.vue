@@ -187,13 +187,13 @@ const chartOptions = {
 const chartData = computed(() => {
   const baseDatasets = [
     {
-      label: "Form Views",
+      label: "مشاهدات النموذج",
       backgroundColor: "rgba(59, 130, 246, 1)",
       borderColor: "rgba(59, 130, 246, 1)",
       data: statsData.value?.views || [],
     },
     {
-      label: "Form Submissions",
+      label: "إجابات النموذج",
       backgroundColor: "rgba(16, 185, 129, 1)",
       borderColor: "rgba(16, 185, 129, 1)",
       data: statsData.value?.submissions || [],

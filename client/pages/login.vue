@@ -1,22 +1,23 @@
 <template>
-  <div>
-    <div class="flex mt-6 mb-10">
+  <div class="min-h-screen flex flex-col justify-center">
+    <div class="flex mt-6 mb-10 justify-center w-full">
       <div
-        class="w-full md:max-w-6xl mx-auto px-4 flex md:flex-row-reverse flex-wrap"
+        class="w-full md:max-w-6xl px-4 flex md:flex-row-reverse flex-wrap justify-center"
       >
         <div class="w-full md:w-1/2 md:p-6">
           <div class="border rounded-md p-6 shadow-md sticky top-4">
-            <h2 class="font-semibold text-2xl">
-              Login to OpnForm
+            <h2 class="font-semibold text-2xl text-center">
+              تسجيل الدخول إلى استبيانات
             </h2>
-            <p class="text-sm text-neutral-500">
-              Welcome back! Please enter your details.
+            <p class="text-sm text-neutral-500 mb-4 text-center">
+              مرحبًا بعودتك! الرجاء إدخال بياناتك.
             </p>
 
             <login-form />
           </div>
         </div>
-        <div class="w-full md:w-1/2 md:p-6 mt-8 md:mt-0">
+
+        <!-- <div class="w-full md:w-1/2 md:p-6 mt-8 md:mt-0">
           <h1 class="font-bold">
             Create beautiful forms and share them anywhere
           </h1>
@@ -76,7 +77,7 @@
               Unlimited submissions
             </p>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <open-form-footer />
@@ -84,12 +85,12 @@
 </template>
 
 <script setup>
-import LoginForm from "~/components/pages/auth/components/LoginForm.vue"
+import LoginForm from "~/components/pages/auth/components/LoginForm.vue";
 
 definePageMeta({
   middleware: "guest",
-})
+});
 useOpnSeoMeta({
   title: "Login",
-})
+});
 </script>

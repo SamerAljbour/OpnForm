@@ -9,7 +9,7 @@
           class="w-full h-full object-cover object-top"
           src="/img/pages/ai_form_builder/background-pattern.svg"
           alt=""
-        >
+        />
       </div>
 
       <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative">
@@ -20,7 +20,8 @@
             Say goodbye to tedious form building with OpnForm's new
             <span
               class="bg-clip-text text-transparent bg-gradient-to-r lg:block from-blue-600 to-blue-400"
-            >AI-powered feature!</span>
+              >AI-powered feature!</span
+            >
           </h1>
           <p
             class="mt-4 sm:mt-5 text-base leading-7 sm:text-xl sm:leading-9 font-medium text-neutral-500"
@@ -49,19 +50,16 @@
 
         <div class="max-w-6xl mx-auto mt-12 sm:mt-16">
           <div
-                          class="-m-2 rounded-xl bg-blue-900/5 p-2 backdrop-blur-xs ring ring-inset ring-blue-900/10 lg:-m-4 lg:rounded-2xl lg:p-4"
+            class="-m-2 rounded-xl bg-blue-900/5 p-2 backdrop-blur-xs ring ring-inset ring-blue-900/10 lg:-m-4 lg:rounded-2xl lg:p-4"
           >
             <video
-                              class="rounded-sm ring ring-neutral-200 shadow-xl shadow-blue-600/10 ring-blue-900/10"
+              class="rounded-sm ring ring-neutral-200 shadow-xl shadow-blue-600/10 ring-blue-900/10"
               controls
               autoplay
               loop
               muted
             >
-              <source
-                src="/video/opnform-ai.mp4"
-                type="video/mp4"
-              >
+              <source src="/video/opnform-ai.mp4" type="video/mp4" />
 
               This browser does not display the video tag.
             </video>
@@ -76,7 +74,7 @@
               class="w-12 h-12 shrink-0"
               src="/img/pages/ai_form_builder/icon-fast.svg"
               alt=""
-            >
+            />
 
             <div>
               <p class="text-md font-semibold text-neutral-900">
@@ -93,7 +91,7 @@
               class="w-12 h-12 shrink-0"
               src="/img/pages/ai_form_builder/icon-customization.svg"
               alt=""
-            >
+            />
 
             <div>
               <p class="text-md font-semibold text-neutral-900">
@@ -110,7 +108,7 @@
               class="w-12 h-12 shrink-0"
               src="/img/pages/ai_form_builder/icon-browser.svg"
               alt=""
-            >
+            />
 
             <div>
               <p class="text-md font-semibold text-neutral-900">
@@ -130,9 +128,7 @@
     <section class="bg-white py-12 sm:py-16 lg:py-20 xl:py-24">
       <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div class="text-center max-w-3xl mx-auto">
-          <h2 class="text-sm font-semibold text-blue-600">
-            How Does It Work?
-          </h2>
+          <h2 class="text-sm font-semibold text-blue-600">How Does It Work?</h2>
           <p
             class="text-3xl mt-4 sm:text-4xl lg:text-5xl font-semibold text-neutral-900 tracking-tight lg:leading-tight"
           >
@@ -155,7 +151,7 @@
               class="w-full lg:flex-1 bg-neutral-300 lg:shrink-0 rounded-2xl ring ring-neutral-200 shadow-xs"
               src="/img/pages/ai_form_builder/step-1.svg"
               alt=""
-            >
+            />
 
             <div
               class="w-16 h-16 rounded-full bg-blue-50 border-2 border-blue-200 hidden xl:inline-flex items-center justify-center text-blue-600 text-2xl font-semibold leading-none"
@@ -168,7 +164,7 @@
                 class="w-auto h-16 hidden lg:block"
                 src="/img/pages/ai_form_builder/icon-create.svg"
                 alt=""
-              >
+              />
 
               <h3
                 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-neutral-900 lg:mt-8"
@@ -191,10 +187,10 @@
             class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-12"
           >
             <img
-                              class="w-full lg:flex-1 bg-neutral-300 lg:shrink-0 rounded-2xl ring ring-neutral-200 shadow-xs lg:order-3"
+              class="w-full lg:flex-1 bg-neutral-300 lg:shrink-0 rounded-2xl ring ring-neutral-200 shadow-xs lg:order-3"
               src="/img/pages/ai_form_builder/step-2.svg"
               alt=""
-            >
+            />
             <div
               class="w-16 h-16 lg:order-2 rounded-full bg-blue-50 border-2 border-blue-200 hidden xl:inline-flex items-center justify-center text-blue-600 text-2xl font-semibold leading-none"
             >
@@ -206,7 +202,7 @@
                 class="w-auto h-16 hidden lg:block"
                 src="/img/pages/ai_form_builder/icon-customization.svg"
                 alt=""
-              >
+              />
 
               <h3
                 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-neutral-900 lg:mt-8"
@@ -231,7 +227,7 @@
               class="w-full lg:flex-1 bg-neutral-300 lg:shrink-0 rounded-2xl ring ring-neutral-200 shadow-xs"
               src="/img/pages/ai_form_builder/step-3.svg"
               alt=""
-            >
+            />
             <div
               class="w-16 h-16 rounded-full bg-blue-50 border-2 border-blue-200 hidden xl:inline-flex items-center justify-center text-blue-600 text-2xl font-semibold leading-none"
             >
@@ -243,7 +239,7 @@
                 class="w-auto h-16 hidden lg:block"
                 src="/img/pages/ai_form_builder/icon-share.svg"
                 alt=""
-              >
+              />
 
               <h3
                 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-neutral-900 lg:mt-8"
@@ -514,19 +510,19 @@
             class="w-auto h-12"
             src="/img/pages/ai_form_builder/icon-email-input.svg"
             alt=""
-          >
+          />
 
           <img
             class="w-auto h-12"
             src="/img/pages/ai_form_builder/icon-radio-buttons.svg"
             alt=""
-          >
+          />
 
           <img
             class="w-auto h-12"
             src="/img/pages/ai_form_builder/icon-textarea.svg"
             alt=""
-          >
+          />
         </div>
 
         <div class="text-center max-w-3xl mx-auto mt-8 sm:mt-12">
@@ -624,18 +620,18 @@
 
 <script setup>
 definePageMeta({
-  middleware: ['root-redirect','self-hosted']
-})
+  middleware: ["root-redirect", "self-hosted"],
+});
 useOpnSeoMeta({
   title: "Free AI form builder",
   description:
     "Transform your ideas into fully functional forms with OpnForm AI Builder – quick, accurate, and tailored to fit any requirement.",
-})
+});
 defineRouteRules({
   swr: 3600,
-})
+});
 
-const { isAuthenticated: authenticated } = useIsAuthenticated()
+const { isAuthenticated: authenticated } = useIsAuthenticated();
 </script>
 
 <style lang="scss" scoped>

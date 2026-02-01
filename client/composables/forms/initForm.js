@@ -34,7 +34,7 @@ export const initForm = (defaultValue = {}, withDefaultProperties = false) => {
     re_fillable: false,
     re_fill_button_text: null,
     submitted_text:
-      "Amazing, we saved your answers. Thank you for your time and have a great day!",
+      "رائع! لقد تم حفظ إجاباتك. شكرًا لوقتك ونتمنى لك يومًا سعيدًا!",
     use_captcha: false,
     captcha_provider: 'recaptcha',
     max_submissions_count: null,
@@ -48,7 +48,7 @@ export const initForm = (defaultValue = {}, withDefaultProperties = false) => {
 
     // Custom SEO
     seo_meta: {},
-    
+
     // Settings for various features
     settings: {},
 
@@ -94,7 +94,7 @@ function getDefaultProperties() {
  * Sets default values for form properties if they are not already defined.
  * This function ensures that all necessary form fields have a valid initial value,
  * which helps maintain consistency and prevents errors due to undefined properties.
- * 
+ *
  * @param {Object} formData - The initial form data object
  * @returns {Object} A new object with default values applied where necessary
  */
@@ -136,7 +136,7 @@ export function setFormDefaults(formData) {
       name: property.name === '' || property.name === null || property.name === undefined ? 'Untitled' : property.name,
     }))
   }
-  
+
   // Ensure settings object exists and is a plain object (not a readonly proxy)
   ensureSettingsObject(filledFormData)
 
@@ -146,12 +146,12 @@ export function setFormDefaults(formData) {
 /**
  * Ensures the settings object exists and is a writable plain object.
  * This is crucial for reactive forms where settings might be undefined or a readonly proxy.
- * 
+ *
  * @param {Object} formData - The form data object
  */
 export function ensureSettingsObject(formData) {
   if (!formData) return
-  
+
   const s = formData.settings
   if (!s || typeof s !== 'object' || Array.isArray(s)) {
     formData.settings = {}

@@ -65,7 +65,7 @@ class FormFactory extends Factory
             'editable_submissions' => false,
             're_fillable' => false,
             're_fill_button_text' => 'Fill Again',
-            'submitted_text' => '<p>Amazing, we saved your answers. Thank you for your time and have a great day!</p>',
+            'submitted_text' => '<p>رائع! لقد تم حفظ إجاباتك. شكرًا لوقتك ونتمنى لك يومًا سعيدًا!</p>',
             'use_captcha' => false,
             'can_be_indexed' => true,
             'password' => false,

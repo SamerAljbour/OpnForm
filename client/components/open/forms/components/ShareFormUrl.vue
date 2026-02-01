@@ -1,14 +1,10 @@
 <template>
-  <CopyContent
-    :content="share_url"
-    label="Copy"
-    class="w-auto"
-  />
+  <CopyContent :content="share_url" label="نسخ " class="w-auto" />
 </template>
-  
+
 <script setup>
-import { computed, defineProps } from 'vue'
-import CopyContent from './CopyContent.vue'
+import { computed, defineProps } from "vue";
+import CopyContent from "./CopyContent.vue";
 
 const props = defineProps({
   form: {
@@ -21,15 +17,14 @@ const props = defineProps({
   },
   extraQueryParam: {
     type: String,
-    default: '',
+    default: "",
   },
-})
+});
 
 const share_url = computed(() => {
   if (props.extraQueryParam) {
-      return `${props.form.share_url}?${props.extraQueryParam}`
+    return `${props.form.share_url}?${props.extraQueryParam}`;
   }
-  return props.form.share_url
-})
+  return props.form.share_url;
+});
 </script>
-  
