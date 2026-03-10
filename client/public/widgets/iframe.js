@@ -82,7 +82,7 @@
     }
 
     function d(e) {
-      var n = e ? f(j.iframe) : {x: 0, y: 0}, i = {x: Number(j.width) + n.x, y: Number(j.height) + n.y}
+      var n = e ? f(j.iframe) : { x: 0, y: 0 }, i = { x: Number(j.width) + n.x, y: Number(j.height) + n.y }
       v(L, "Reposition requested from iFrame (offset x:" + n.x + " y:" + n.y + ")"), window.top === window.self ? (s = i, u(), v(L, "--")) : window.parentIFrame ? window.parentIFrame["scrollTo" + (e ? "Offset" : "")](i.x, i.y) : w(L, "Unable to scroll to requested position, window.parentIFrame not found")
     }
 
@@ -92,10 +92,10 @@
 
     function g(e) {
       var n, i = {}
-      i = 0 === Number(j.width) && 0 === Number(j.height) ? {x: (n = t(9).split(":"))[1], y: n[0]} : {
+      i = 0 === Number(j.width) && 0 === Number(j.height) ? { x: (n = t(9).split(":"))[1], y: n[0] } : {
         x: j.width,
         y: j.height
-      }, h(e, {iframe: j.iframe, screenX: Number(i.x), screenY: Number(i.y), type: j.type})
+      }, h(e, { iframe: j.iframe, screenX: Number(i.x), screenY: Number(i.y), type: j.type })
     }
 
     function h(e, n) {
@@ -137,46 +137,46 @@
     }() && function e() {
       var i, o, r, a, m
       switch (c[L] && c[L].firstRun && c[L] && (c[L].firstRun = !1), j.type) {
-        case"close":
+        case "close":
           F(j.iframe)
           break
-        case"message":
+        case "message":
           o = t(6), v(L, "onMessage passed: {iframe: " + j.iframe.id + ", message: " + o + "}"), h("onMessage", {
             iframe: j.iframe,
             message: JSON.parse(o)
           }), v(L, "--")
           break
-        case"mouseenter":
+        case "mouseenter":
           g("onMouseEnter")
           break
-        case"mouseleave":
+        case "mouseleave":
           g("onMouseLeave")
           break
-        case"autoResize":
+        case "autoResize":
           c[L].autoResize = JSON.parse(t(9))
           break
-        case"scrollTo":
+        case "scrollTo":
           d(!1)
           break
-        case"scrollToOffset":
+        case "scrollToOffset":
           d(!0)
           break
-        case"pageInfo":
+        case "pageInfo":
           l(c[L] && c[L].iframe, L), i = L, y("Add ", p), c[i] && (c[i].stopPageInfo = $)
           break
-        case"pageInfoStop":
+        case "pageInfoStop":
           c[L] && c[L].stopPageInfo && (c[L].stopPageInfo(), delete c[L].stopPageInfo)
           break
-        case"inPageLink":
+        case "inPageLink":
           t(9), m = decodeURIComponent(a = a.split("#")[1] || ""), (m = document.getElementById(m) || document.getElementsByName(m)[0]) ? (m = f(m), v(L, "Moving to in page link (#" + a + ") at x: " + m.x + " y: " + m.y), s = {
             x: m.x,
             y: m.y
           }, u(), v(L, "--")) : window.top === window.self ? v(L, "In page link #" + a + " not found") : window.parentIFrame ? window.parentIFrame.moveToAnchor(a) : v(L, "In page link #" + a + " not found and window.parentIFrame not found")
           break
-        case"reset":
+        case "reset":
           W(j)
           break
-        case"init":
+        case "init":
           n(), h("onInit", j.iframe)
           break
         default:
@@ -315,12 +315,12 @@
         for (i in u) Object.prototype.hasOwnProperty.call(u, i) && (c[l][i] = (Object.prototype.hasOwnProperty.call(o, i) ? o : u)[i])
         c[l] && (c[l].targetOrigin = !0 !== c[l].checkOrigin || "" === (n = c[l].remoteHost) || null !== n.match(/^(about:blank|javascript:|file:\/\/)/) ? "*" : n)
       }(o), v(l, "IFrame scrolling " + (c[l] && c[l].scrolling ? "enabled" : "disabled") + " for " + l), t.style.overflow = !1 === (c[l] && c[l].scrolling) ? "hidden" : "auto", c[l] && c[l].scrolling) {
-        case"omit":
+        case "omit":
           break
-        case!0:
+        case !0:
           t.scrolling = "yes"
           break
-        case!1:
+        case !1:
           t.scrolling = "no"
           break
         default:
@@ -332,7 +332,7 @@
             e === t && F(t)
           })
         })
-      }).observe(t.parentNode, {childList: !0}), p(t, "load", function () {
+      }).observe(t.parentNode, { childList: !0 }), p(t, "load", function () {
         var n, i
         T("iFrame.onload", a, t, e, !0), n = c[l] && c[l].firstRun, i = c[l] && c[l].heightCalculationMethod in f, !n && i && W({
           iframe: t,
@@ -400,11 +400,11 @@
     }), p(document, "visibilitychange", P), p(document, "-webkit-visibilitychange", P), function (t, o) {
       var r
       switch (i = [], (r = t) && r.enablePublicMethods && w("enablePublicMethods option has been removed, public methods are now always available in the iFrame"), typeof o) {
-        case"undefined":
-        case"string":
+        case "undefined":
+        case "string":
           Array.prototype.forEach.call(document.querySelectorAll(o || "iframe"), n.bind(e, t))
           break
-        case"object":
+        case "object":
           n(t, o)
           break
         default:
@@ -482,25 +482,39 @@ function initEmbed(formSlug, options = {}) {
 
   const { autoResize = true } = options || {}
 
+  // window.addEventListener('message', function (event) {
+  //   // Make sure that the event data has the type `form-submitted`
+  //   if (event.data?.type !== 'form-submitted' || event.data?.form?.slug !== formSlug) {
+  //     return
+  //   }
+
+  //   // Redirect
+  //   if (event.data?.form?.redirect_target_url) {
+
+  //     // redirect to target URL
+  //     window.top.location.href = event.data.form.redirect_target_url
+  //   }
+  // })
   window.addEventListener('message', function (event) {
-    // Make sure that the event data has the type `form-submitted`
+    // Validate origin before processing — reject messages from untrusted sources
+    const allowedOrigin = options.trustedOrigin || 'https://surveys'
+    if (event.origin !== allowedOrigin) {
+      return
+    }
+
     if (event.data?.type !== 'form-submitted' || event.data?.form?.slug !== formSlug) {
       return
     }
 
-    // Redirect
     if (event.data?.form?.redirect_target_url) {
-
-      // redirect to target URL
       window.top.location.href = event.data.form.redirect_target_url
     }
   })
-
   if (!autoResize) {
     return
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    iFrameResize({log: false, checkOrigin: false}, '#' + formSlug)
+    iFrameResize({ log: false, checkOrigin: false }, '#' + formSlug)
   })
 }

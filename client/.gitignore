@@ -24,3 +24,7 @@ logs
 .env.*
 !.env.example
 !.env.docker
+
+# Node
+*.local
+.npmrc

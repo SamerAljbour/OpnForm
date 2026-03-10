@@ -20,3 +20,10 @@ client/.env.*
 !.env.example
 !api/.env.example
 !client/.env.example
+
+# Laravel
+/storage/oauth-private.key
+/storage/oauth-public.key
+bootstrap/cache/
+
+

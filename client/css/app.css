@@ -363,6 +363,34 @@ body.dark * {
 }
 
 :root {
+    --ui-primary: #8f0000;
+    --ui-color-primary-50: oklch(95% 0.02 29); /* very light red */
+    --ui-color-primary-100: oklch(90% 0.035 28); /* light red */
+    --ui-color-primary-200: oklch(85% 0.06 28); /* soft red */
+    --ui-color-primary-300: oklch(78% 0.1 28); /* medium red */
+    --ui-color-primary-400: oklch(70% 0.16 28); /* deep red */
+    --ui-color-primary-500: oklch(
+        62% 0.21 28
+    ); /* base dark red (main #8f0000) */
+    --ui-color-primary-600: oklch(55% 0.245 28); /* darker red */
+    --ui-color-primary-700: oklch(48% 0.24 28); /* very dark red */
+    --ui-color-primary-800: oklch(42% 0.2 28); /* deep almost maroon */
+    --ui-color-primary-900: oklch(38% 0.15 28); /* nearly black red */
+    --ui-color-primary-950: oklch(28% 0.09 28); /* darkest red */
+    /* --ui-color-primary-100: #773939; */
+    /* --ui-secorndary: #8f0000; */
+    --ui-color-secondary-50: oklch(99% 0.01 80); /* very very light cream */
+    --ui-color-secondary-100: oklch(96% 0.02 80); /* light cream */
+    --ui-color-secondary-200: oklch(92% 0.035 80); /* soft cream */
+    --ui-color-secondary-300: oklch(87% 0.05 80); /* light beige */
+    --ui-color-secondary-400: oklch(82% 0.07 80); /* beige */
+    --ui-color-secondary-500: oklch(77% 0.09 80); /* base secondary (#efe9e1) */
+    --ui-color-secondary-600: oklch(70% 0.11 80); /* darker beige */
+    --ui-color-secondary-700: oklch(63% 0.12 80); /* muted brownish */
+    --ui-color-secondary-800: oklch(55% 0.13 80); /* dark cream / light brown */
+    --ui-color-secondary-900: oklch(45% 0.14 80); /* dark beige */
+    --ui-color-secondary-950: oklch(35% 0.15 80); /* deepest brown-beige */
+
     --ui-border: var(--ui-color-neutral-300);
     --ui-border-muted: var(--ui-color-neutral-300);
     --ui-border-accented: var(--ui-color-neutral-300);

@@ -55,7 +55,7 @@ const componentCache = new Map()
  * Composable for lazy loading components from registries
  */
 export function useComponentRegistry() {
-  
+
   /**
    * Load an integration component by ID
    * @param {string} integrationId - The integration identifier
@@ -63,14 +63,14 @@ export function useComponentRegistry() {
    */
   const loadIntegrationComponent = async (integrationId) => {
     const cacheKey = `integration:${integrationId}`
-    
+
     if (componentCache.has(cacheKey)) {
       return componentCache.get(cacheKey)
     }
 
     const loader = integrationRegistry.get(integrationId)
     if (!loader) {
-      console.warn(`Integration component not found: ${integrationId}`)
+      console.warn('Integration component not found:', integrationId)
       return null
     }
 
@@ -80,7 +80,7 @@ export function useComponentRegistry() {
       componentCache.set(cacheKey, resolvedComponent)
       return resolvedComponent
     } catch (error) {
-      console.error(`Failed to load integration component: ${integrationId}`, error)
+      console.error('Failed to load integration component:', integrationId, error)
       return null
     }
   }
@@ -92,14 +92,14 @@ export function useComponentRegistry() {
    */
   const loadActionComponent = async (actionName) => {
     const cacheKey = `action:${actionName}`
-    
+
     if (componentCache.has(cacheKey)) {
       return componentCache.get(cacheKey)
     }
 
     const loader = actionRegistry.get(actionName)
     if (!loader) {
-      console.warn(`Action component not found: ${actionName}`)
+      console.warn('Action component not found:', actionName)
       return null
     }
 
@@ -109,7 +109,7 @@ export function useComponentRegistry() {
       componentCache.set(cacheKey, resolvedComponent)
       return resolvedComponent
     } catch (error) {
-      console.error(`Failed to load action component: ${actionName}`, error)
+      console.error('Failed to load action component:', actionName, error)
       return null
     }
   }
@@ -121,14 +121,14 @@ export function useComponentRegistry() {
    */
   const loadProviderWidget = async (widgetName) => {
     const cacheKey = `provider:${widgetName}`
-    
+
     if (componentCache.has(cacheKey)) {
       return componentCache.get(cacheKey)
     }
 
     const loader = providerRegistry.get(widgetName)
     if (!loader) {
-      console.warn(`Provider widget not found: ${widgetName}`)
+      console.warn('Provider widget not found:', widgetName)
       return null
     }
 
@@ -138,7 +138,7 @@ export function useComponentRegistry() {
       componentCache.set(cacheKey, resolvedComponent)
       return resolvedComponent
     } catch (error) {
-      console.error(`Failed to load provider widget: ${widgetName}`, error)
+      console.error('Failed to load provider widget:', widgetName, error)
       return null
     }
   }
@@ -241,4 +241,4 @@ export function useComponentRegistry() {
     getProviderWidget,
     createAsyncComponent
   }
-} 
+}

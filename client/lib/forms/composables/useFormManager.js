@@ -25,17 +25,17 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
   // --- Reactive State ---
   const config = ref(initialFormConfig) // Use ref for potentially replaceable config
   const form = useForm() // Core vForm instance
-  
+
   // Make mode reactive - accept either a ref or a static value
-  const mode = options.mode && typeof options.mode === 'object' && 'value' in options.mode 
-    ? options.mode 
+  const mode = options.mode && typeof options.mode === 'object' && 'value' in options.mode
+    ? options.mode
     : ref(initialMode)
-  
+
   const strategy = computed(() => createFormModeStrategy(mode.value)) // Strategy based on reactive mode
-  
+
   // Use the passed darkMode ref if it's a ref, otherwise create a new ref
-  const darkMode = options.darkMode && typeof options.darkMode === 'object' && 'value' in options.darkMode 
-    ? options.darkMode 
+  const darkMode = options.darkMode && typeof options.darkMode === 'object' && 'value' in options.darkMode
+    ? options.darkMode
     : ref(options.darkMode || false)
 
   const state = reactive({
@@ -53,7 +53,7 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
 
   // Instantiate pending submission service (handles localStorage saving)
   const pendingSubmissionService = usePendingSubmission(config, formDataRef)
-  
+
   // Instantiate partial submission service (handles server auto-sync)
   const partialSubmissionService = usePartialSubmission(config, formDataRef, pendingSubmissionService)
 
@@ -101,11 +101,11 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
 
     // Update the config reference
     config.value = newConfig
-    
+
     // Reset form state
     state.isSubmitted = false
     state.currentPage = 0
-    
+
     // Reinitialize with new config
     return initialize(options)
   }
@@ -118,7 +118,7 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
     state.isProcessing = true
     state.isSubmitted = false
     state.currentPage = 0
-   
+
     await initialization.initialize({
       ...options
     })
@@ -128,12 +128,12 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
 
     // Ensure structure is built after initialization
     replaceStructure()
-    
+
     // Start partial submission sync if enabled in both config and strategy
     if (import.meta.client && config.value.enable_partial_submissions && strategy.value.submission.enablePartialSubmissions) {
       partialSubmissionService.startSync()
     }
-    
+
     state.isProcessing = false
   }
 
@@ -184,7 +184,7 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
       if (paymentBlock) {
         // In editor/test mode (not LIVE), skip payment validation
         const isPaymentRequired = mode.value === FormMode.LIVE ? !!paymentBlock.required : false
-        
+
         // Pass required refs if Stripe needs them now (unlikely for just intent creation)
         const paymentResult = await payment.processPayment(paymentBlock, isPaymentRequired)
         if (!paymentResult.success) {
@@ -227,7 +227,7 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
    */
   const submit = async (submitOptions = {}) => {
     if (state.isProcessing) {
-        return Promise.reject('Processing')
+      return Promise.reject('Processing')
     }
     state.isProcessing = true
 
@@ -239,7 +239,7 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
       if (!import.meta.server && toValue(config).enable_partial_submissions && strategy.value.submission.enablePartialSubmissions) {
         partialSubmissionService.stopSync({ skipFinalSync: true })
       }
-      
+
       // 1. Stop Timer & Get Time
       timer.stop()
       const completionTime = timer.getCompletionTime()
@@ -247,12 +247,12 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
       // 2. Process payment if applicable
       const paymentBlock = structure.value.currentPagePaymentBlock.value
       if (paymentBlock) {
-        
+
         // In editor/test mode (not LIVE), skip payment validation
         const isPaymentRequired = mode.value === FormMode.LIVE ? !!paymentBlock.required : false
-        
+
         const paymentResult = await payment.processPayment(paymentBlock, isPaymentRequired)
-        
+
         if (!paymentResult.success) {
           // If payment was skipped because it's not required, we continue
           if (!paymentResult.skipped) {
@@ -262,7 +262,7 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
           }
         }
       }
-      
+
       // 3. Get submission hash from partialSubmission if enabled
       let submissionHash = null
       if (!import.meta.server && toValue(config).enable_partial_submissions && strategy.value.submission.enablePartialSubmissions) {
@@ -280,18 +280,18 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
       // 5. Update State on Success
       state.isSubmitted = true
       state.isProcessing = false
-      
+
       // 6. Play confetti if enabled in config
       if (import.meta.client && toValue(config).confetti_on_submission) {
         useConfetti().play()
       }
-      
+
       // 7. Clear pending submission data on successful submit
       pendingSubmissionService?.clear()
-      
+
       // 8. Clear partial submission hash to prevent stale data
       partialSubmissionService?.clearSubmissionHash()
-      
+
       // 9. Handle amplitude logging
       if (import.meta.client) {
         const amplitude = useAmplitude()
@@ -300,7 +300,7 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
           form_id: toValue(config).id
         })
       }
-      
+
       // 10. Handle postMessage communication for iframe integration
       if (import.meta.client) {
         const isIframe = useIsIframe()
@@ -310,27 +310,29 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
           form: {
             slug: formConfig.slug,
             id: formConfig.id,
-            redirect_target_url: (formConfig.is_pro && submissionResult?.redirect && submissionResult?.redirect_url) 
-                              ? submissionResult.redirect_url 
-                              : null
+            redirect_target_url: (formConfig.is_pro && submissionResult?.redirect && submissionResult?.redirect_url)
+              ? submissionResult.redirect_url
+              : null
           },
           submission_data: form.data(),
           completion_time: completionTime
         })
-        
+
         // Send message to parent if in iframe
         if (isIframe) {
-          window.parent.postMessage(payload, '*')
+          // window.parent.postMessage(payload, '*')
+          window.parent.postMessage(payload, window.location.origin)
         }
         // Also send to current window for potential internal listeners
-        window.postMessage(payload, '*')
+        // window.postMessage(payload, '*')
+        window.postMessage(payload, window.location.origin)
       }
-      
+
       // 11. Handle redirect if server response includes redirect info
       if (import.meta.client && submissionResult?.redirect && submissionResult?.redirect_url) {
         window.location.href = submissionResult.redirect_url
       }
-      
+
       return submissionResult // Return result from submission composable
 
     } catch (error) {
@@ -338,18 +340,18 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
       if (!import.meta.server && toValue(config).enable_partial_submissions && strategy.value.submission.enablePartialSubmissions) {
         partialSubmissionService.startSync()
       }
-      
+
       // Handle validation or submission errors using validation composable's handler
       validation.onValidationFailure({
         fieldGroups: structure.value.fieldGroups.value,
         setPageIndexCallback: (index) => { state.currentPage = index },
         timerService: timer
       })
-      state.isProcessing = false 
+      state.isProcessing = false
       throw error
     }
   }
-  
+
   /** Resets the form to its initial state for refilling with optional URL parameters. */
   const restart = async (options = {}) => {
     state.isSubmitted = false
@@ -359,9 +361,9 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
     timer.start() // Restart timer
 
     // Use resetAndFill with empty object to properly clear originalData and all fields
-    form.resetAndFill({})    
+    form.resetAndFill({})
     pendingSubmissionService?.clear()
-    
+
     // Reinitialize the form to reapply URL parameters and default values
     await initialize({
       urlParams: options.urlParams,
@@ -370,7 +372,7 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
       skipUrlParams: options.skipUrlParams // Pass through the skipUrlParams option
     })
   }
-  
+
   // Clean up when component using the manager is unmounted
   if (import.meta.client) {
     onBeforeUnmount(() => {
@@ -380,7 +382,7 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
     })
   }
 
-  // --- Exposed API --- 
+  // --- Exposed API ---
   return {
     // Reactive State & Config
     state,          // Core state (currentPage, isProcessing, isSubmitted)
@@ -415,4 +417,4 @@ export function useFormManager(initialFormConfig, initialMode = FormMode.LIVE, o
     isDirty: computed(() => form.isDirty),
     busy: computed(() => form.busy), // Or potentially combine with state.isProcessing
   }
-} 
+}

@@ -4,7 +4,7 @@ import clonedeep from 'clone-deep'
 import { createError } from '#app'
 
 /**
- * @fileoverview Composable for initializing form data, with complete handling of 
+ * @fileoverview Composable for initializing form data, with complete handling of
  * form state persistence, URL parameters, and default values.
  */
 export function useFormInitialization(formConfig, form, pendingSubmission) {
@@ -16,7 +16,7 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
      * 2. Load from pendingSubmission (localStorage) - client-side only
      * 3. Apply URL parameters
      * 4. Apply default values for fields
-     * 
+     *
      * @param {Object} options - Initialization options
      * @param {String} [options.submissionId] - ID of submission to load
      * @param {URLSearchParams} [options.urlParams] - URL parameters
@@ -25,12 +25,12 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
      */
   const initialize = async (options = {}) => {
     const config = toValue(formConfig)
-    
+
 
     // 1. Reset form state
     form.reset()
     form.errors.clear()
-    
+
     // 2. Try loading from submission ID
     if (options.submissionId) {
       try {
@@ -44,27 +44,27 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
         // For other errors, continue with form initialization
       }
     }
-    
+
     // 3. Try loading from pendingSubmission
     if (!(options.skipPendingSubmission ?? false) && tryLoadFromPendingSubmission()) {
       updateSpecialFields()
       return // Exit if loaded successfully
     }
-    
+
     // 4. Apply URL parameters
     if (!(options.skipUrlParams ?? false) && options.urlParams) {
       applyUrlParameters(options.urlParams)
     }
-    
+
     // 5. Apply special field handling
     updateSpecialFields()
-    
+
     // 6. Apply default data from config or options
     const defaultValuesToApply = options.defaultData || config?.default_data
     if (defaultValuesToApply) {
       applyDefaultValues(defaultValuesToApply, config?.properties)
     }
-    
+
     // 7. Process any select fields to ensure IDs are converted to names
     // This is crucial when receiving data that might contain IDs instead of names
     const currentData = form.data()
@@ -72,7 +72,7 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
       resetAndFill(currentData)
     }
   }
-  
+
   /**
    * Wrapper for form.resetAndFill that converts select option IDs to names
    * @param {Object} formData - Form data to clean and fill
@@ -82,17 +82,17 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
       form.reset()
       return
     }
-    
+
     // Clone the data to avoid mutating the original
     const cleanData = clonedeep(formData)
-    
+
     // Process select fields to convert IDs to names
     if (!formConfig.value || !formConfig.value.properties || !Array.isArray(formConfig.value.properties)) {
       // If properties aren't available, just use the data as is
       form.resetAndFill(cleanData)
       return
     }
-    
+
     // Iterate through form fields to process select fields
     formConfig.value.properties.forEach(field => {
       // Basic validation
@@ -100,7 +100,7 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
       if (!field.id || !field.type) return
       // Skip only when value is truly undefined or null
       if (cleanData[field.id] === undefined || cleanData[field.id] === null) return
-      
+
       // Process checkbox fields - convert string and numeric values to boolean
       if (field.type === 'checkbox') {
         const value = cleanData[field.id]
@@ -114,16 +114,16 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
       else if (['select', 'multi_select'].includes(field.type)) {
         // Make sure the field has options
         if (!field[field.type] || !Array.isArray(field[field.type].options)) return
-        
+
         const options = field[field.type].options
-        
+
         // Process array values (multi-select)
         if (Array.isArray(cleanData[field.id])) {
           cleanData[field.id] = cleanData[field.id].map(optionId => {
             const option = options.find(opt => opt.id === optionId)
             return option ? option.name : optionId
           })
-        } 
+        }
         // Process single values (select)
         else {
           const option = options.find(opt => opt.id === cleanData[field.id])
@@ -133,7 +133,7 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
         }
       }
     })
-    
+
     // Fill with cleaned data
     form.resetAndFill(cleanData)
   }
@@ -144,25 +144,25 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
    */
   const applyUrlParameters = (params) => {
     if (!params) return
-    
+
     // First, handle regular parameters
     params.forEach((value, key) => {
       // Skip array parameters for now
       if (key.endsWith('[]')) return
-      
+
       try {
         // Try to parse JSON if the value starts with '{'
-        const parsedValue = (typeof value === 'string' && value.startsWith('{')) 
-          ? JSON.parse(value) 
+        const parsedValue = (typeof value === 'string' && value.startsWith('{'))
+          ? JSON.parse(value)
           : value
-          
+
         form[key] = parsedValue
       } catch {
         // If parsing fails, use the original value
         form[key] = value
       }
     })
-    
+
     // Handle array parameters (key[])
     const paramKeys = [...new Set([...params.keys()])]
     paramKeys.forEach(key => {
@@ -198,8 +198,8 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
       }
       // Handle matrix fields with prefill data, only if no value is set
       else if (field.type === 'matrix' && form[field.id] == null && field.prefill) {
-        form[field.id] = {...field.prefill}
-      } 
+        form[field.id] = { ...field.prefill }
+      }
       // Handle other fields with prefill data, only if no value is set
       else if (field.id && form[field.id] == null && field.prefill) {
         form[field.id] = field.prefill
@@ -230,7 +230,7 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
       .then(submissionData => {
         if (submissionData.data) {
           resetAndFill({
-            ...submissionData.data, 
+            ...submissionData.data,
             submission_id: submissionIdValue
           })
           return true
@@ -250,7 +250,13 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
             statusMessage: 'Submission not found'
           })
         } else {
-          console.error(`Error loading submission ${submissionIdValue} for form ${slug}:`, error)
+          console.error(
+            'Error loading submission for form:',
+            slug,
+            'submission ID:',
+            submissionIdValue,
+            error
+          )
           form.reset()
           return false
         }
@@ -266,19 +272,19 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
     if (import.meta.server || !pendingSubmission) {
       return false
     }
-    
+
     // Check if auto-save is enabled for this form
     if (!pendingSubmission.enabled?.value) {
       return false
     }
-    
+
     // Get the saved data
     const pendingData = pendingSubmission.get()
-    
+
     if (!pendingData || Object.keys(pendingData).length === 0) {
       return false
     }
-    
+
     resetAndFill(pendingData)
     return true
   }
@@ -289,4 +295,4 @@ export function useFormInitialization(formConfig, form, pendingSubmission) {
     applyDefaultValues,
     resetAndFill // Export our wrapped function for use elsewhere
   }
-} 
+}

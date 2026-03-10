@@ -27,10 +27,12 @@
           enter-from-class="opacity-0 translate-y-4"
           enter-to-class="opacity-100 translate-y-0"
         >
-          <h2
-            class="text-3xl font-bold text-neutral-900 mb-3"
-          >
-            Upgrade to <span class="text-primary bg-gradient-to-r bg-clip-text">Yearly</span> and Save Big
+          <h2 class="text-3xl font-bold text-neutral-900 mb-3">
+            Upgrade to
+            <span class="text-primary bg-gradient-to-r bg-clip-text"
+              >Yearly</span
+            >
+            and Save Big
           </h2>
         </Transition>
 
@@ -40,10 +42,10 @@
           enter-from-class="opacity-0 translate-y-4"
           enter-to-class="opacity-100 translate-y-0"
         >
-          <p
-            class="text-sm text-neutral-600 mb-8"
-          >
-            Get <span class="text-primary font-bold">2 months for free</span> when you switch to annual billing
+          <p class="text-sm text-neutral-600 mb-8">
+            Get
+            <span class="text-primary font-bold">2 months for free</span> when
+            you switch to annual billing
           </p>
         </Transition>
 
@@ -56,19 +58,33 @@
           <div
             class="flex items-center justify-center gap-8 mb-8 pb-8 border-b border-neutral-200"
           >
-            <div class="text-center transform transition-all duration-300 hover:scale-105">
+            <div
+              class="text-center transform transition-all duration-300 hover:scale-105"
+            >
               <p class="text-neutral-500 mb-2 text-sm">Monthly plan</p>
-              <p class="text-3xl font-semibold text-neutral-900">$19<span class="text-lg">/month</span></p>
+              <p class="text-3xl font-semibold text-neutral-900">
+                $19<span class="text-lg">/month</span>
+              </p>
             </div>
 
-            <div class="h-16 w-px bg-gradient-to-b from-transparent via-neutral-200 to-transparent"></div>
-            
-            <div class="text-center transform transition-all duration-300 hover:scale-105 relative">
-              <div class="absolute -top-4 -right-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-bounce-subtle">
+            <div
+              class="h-16 w-px bg-gradient-to-b from-transparent via-neutral-200 to-transparent"
+            ></div>
+
+            <div
+              class="text-center transform transition-all duration-300 hover:scale-105 relative"
+            >
+              <div
+                class="absolute -top-4 -right-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-bounce-subtle"
+              >
                 BEST
               </div>
               <p class="text-primary mb-2 text-sm font-medium">Yearly plan</p>
-              <p class="text-4xl font-bold text-primary bg-gradient-to-r bg-clip-text">$16<span class="text-lg">/month</span></p>
+              <p
+                class="text-4xl font-bold text-primary bg-gradient-to-r bg-clip-text"
+              >
+                $16<span class="text-lg">/month</span>
+              </p>
               <p class="text-xs text-neutral-500 mt-1">$192 billed annually</p>
             </div>
           </div>
@@ -94,9 +110,13 @@
                     name="heroicons:check-circle"
                     class="w-5 h-5 text-primary flex-shrink-0 transform transition-all duration-300 group-hover:scale-110"
                   />
-                  <div class="absolute inset-0 bg-primary/20 rounded-full blur-md opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
+                  <div
+                    class="absolute inset-0 bg-primary/20 rounded-full blur-md opacity-0 group-hover:opacity-50 transition-opacity duration-300"
+                  ></div>
                 </div>
-                <span class="text-sm text-neutral-700 font-medium">{{ benefit }}</span>
+                <span class="text-sm text-neutral-700 font-medium">{{
+                  benefit
+                }}</span>
               </div>
             </TransitionGroup>
           </div>
@@ -127,10 +147,9 @@
             enter-from-class="opacity-0"
             enter-to-class="opacity-100"
           >
-            <p
-              class="text-xs text-neutral-500 mb-2"
-            >
-              By clicking, you'll be charged <span class="font-bold">$192 annually</span>.
+            <p class="text-xs text-neutral-500 mb-2">
+              By clicking, you'll be charged
+              <span class="font-bold">$192 annually</span>.
             </p>
           </Transition>
         </div>
@@ -160,107 +179,125 @@
 </template>
 
 <script setup>
-import { useStorage } from '@vueuse/core'
+import { useStorage } from "@vueuse/core";
 
-const amplitude = useAmplitude()
-const auth = useAuth()
-const { data: user } = auth.user()
-const { current: workspace } = useCurrentWorkspace()
+const amplitude = useAmplitude();
+const auth = useAuth();
+const { data: user } = auth.user();
+const { current: workspace } = useCurrentWorkspace();
 
-const alert = useAlert()
-const loading = ref(false)
-const upgradeForm = useForm({})
+const alert = useAlert();
+const loading = ref(false);
+const upgradeForm = useForm({});
 
 // Use VueUse's useStorage for reactive localStorage
 const lastShownDate = useStorage(
-  'yearly_upgrade_modal_last_shown',
+  "yearly_upgrade_modal_last_shown",
   null,
-  import.meta.server ? undefined : localStorage
-)
+  import.meta.server ? undefined : localStorage,
+);
 
 // Check if enough time has passed since last shown (non-reactive check)
 const hasEnoughTimePassed = () => {
-  if (!import.meta.client) return false
-  if (!lastShownDate.value) return true // Never shown before
-  
-  const lastShown = new Date(lastShownDate.value)
-  const now = new Date()
-  const daysSinceLastShown = Math.floor((now - lastShown) / (1000 * 60 * 60 * 24))
-  
+  if (!import.meta.client) return false;
+  if (!lastShownDate.value) return true; // Never shown before
+
+  const lastShown = new Date(lastShownDate.value);
+  const now = new Date();
+  const daysSinceLastShown = Math.floor(
+    (now - lastShown) / (1000 * 60 * 60 * 24),
+  );
+
   // Show if 30 days (1 month) have passed
-  return daysSinceLastShown >= 30
-}
+  return daysSinceLastShown >= 30;
+};
 
 // Helper function to save the current date when modal is shown
 const markModalAsShown = () => {
-  lastShownDate.value = new Date().toISOString()
-}
+  lastShownDate.value = new Date().toISOString();
+};
 
 // Determine if user is eligible for the modal (without time check)
-const isSelfHosted = computed(() => useFeatureFlag('self_hosted'))
+const isSelfHosted = computed(() => useFeatureFlag("self_hosted"));
 const isEligibleForModal = computed(() => {
-  return import.meta.client && 
-    !isSelfHosted.value && 
+  return (
+    import.meta.client &&
+    !isSelfHosted.value &&
     workspace.value?.is_admin &&
-    workspace.value?.is_pro && 
+    workspace.value?.is_pro &&
     !workspace.value?.is_yearly_plan
-})
+  );
+});
 
 // Modal state - controlled internally
-const isModalOpen = ref(false)
+const isModalOpen = ref(false);
 
 // Watch for eligibility - check time only once when becoming eligible
-watch(isEligibleForModal, (isEligible) => {
-  if (isEligible && hasEnoughTimePassed()) {
-    isModalOpen.value = true
-    markModalAsShown()
-    amplitude.logEvent('yearly_upgrade_modal_viewed', {
-      user_id: user.value?.id,
-    })
-  }
-}, { immediate: true })
+watch(
+  isEligibleForModal,
+  (isEligible) => {
+    if (isEligible && hasEnoughTimePassed()) {
+      isModalOpen.value = true;
+      markModalAsShown();
+      amplitude.logEvent("yearly_upgrade_modal_viewed", {
+        user_id: user.value?.id,
+      });
+    }
+  },
+  { immediate: true },
+);
 
 const benefits = [
-  'Save 20% compared to monthly billing',
-  'Lock in current pricing for a full year',
-  'Keep access to the same features'
-]
+  "Save 20% compared to monthly billing",
+  "Lock in current pricing for a full year",
+  "Keep access to the same features",
+];
 
 const closeModal = () => {
-  isModalOpen.value = false
-}
+  isModalOpen.value = false;
+};
 
 const handleUpgrade = async () => {
-  loading.value = true
-  amplitude.logEvent('yearly_upgrade_button_clicked', {
+  loading.value = true;
+  amplitude.logEvent("yearly_upgrade_button_clicked", {
     user_id: user.value?.id,
-  })
+  });
   // Set workspace_id at call time to ensure it's current
-  upgradeForm.workspace_id = workspace.value?.id
-  upgradeForm.post('/subscription/upgrade-to-yearly').then(async (response) => {
-    alert.success(response.message)
+  upgradeForm.workspace_id = workspace.value?.id;
+  upgradeForm
+    .post("/subscription/upgrade-to-yearly")
+    .then(async (response) => {
+      alert.success(response.message);
 
-    // Refetch the user
-    await auth.invalidateUser()
+      // Refetch the user
+      await auth.invalidateUser();
 
-    loading.value = false
-    closeModal()
-  }).catch((error) => {
-    loading.value = false
-    let message = error.data?.message || 'Failed to upgrade to yearly plan. Please try again later.'
-    let actions = [{
-      label: 'Manage Billing',
-      icon: 'i-heroicons-arrow-top-right-on-square',
-      onclick: () => { window.open('/home?user-settings=billing', '_blank') }
-    }]
-    alert.error(message, 10000, { actions })
-  })
-}
+      loading.value = false;
+      closeModal();
+    })
+    .catch((error) => {
+      loading.value = false;
+      let message =
+        error.data?.message ||
+        "Failed to upgrade to yearly plan. Please try again later.";
+      let actions = [
+        {
+          label: "Manage Billing",
+          icon: "i-heroicons-arrow-top-right-on-square",
+          onclick: () => {
+            window.open("/home?user-settings=billing", "_blank");
+          },
+        },
+      ];
+      alert.error(message, 10000, { actions });
+    });
+};
 </script>
 
 <style scoped>
 @keyframes pulse-subtle {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -269,7 +306,8 @@ const handleUpgrade = async () => {
 }
 
 @keyframes bounce-subtle {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
