@@ -17,7 +17,7 @@
           <div
             class="flex justify-center p-4 bg-white rounded-lg max-w-xs mx-auto"
           >
-            <div v-html="qrCode" class="flex" />
+            <div v-html="sanitizedQrCode" class="flex" />
           </div>
         </div>
 
@@ -59,6 +59,8 @@
 <script setup>
 import CopyContent from "~/components/open/forms/components/CopyContent.vue";
 
+const { $sanitize } = useNuxtApp();
+
 const props = defineProps({
   enabling: { type: Boolean, default: false },
   confirming: { type: Boolean, default: false },
@@ -69,6 +71,51 @@ const props = defineProps({
 const emit = defineEmits(["enable", "confirm"]);
 
 const code = ref([]);
+
+// Sanitize the QR code SVG — SVG content can contain <script> tags or
+// event handlers (e.g. onload) that execute in the browser if not stripped
+const sanitizedQrCode = computed(() =>
+  $sanitize(props.qrCode, {
+    ALLOWED_TAGS: [
+      "svg",
+      "path",
+      "rect",
+      "circle",
+      "g",
+      "defs",
+      "clipPath",
+      "use",
+      "image",
+      "line",
+      "polyline",
+      "polygon",
+      "text",
+      "tspan",
+    ],
+    ALLOWED_ATTR: [
+      "viewBox",
+      "xmlns",
+      "width",
+      "height",
+      "x",
+      "y",
+      "d",
+      "fill",
+      "stroke",
+      "stroke-width",
+      "transform",
+      "cx",
+      "cy",
+      "r",
+      "rx",
+      "ry",
+      "id",
+      "clip-path",
+    ],
+    FORBID_ATTR: ["onload", "onerror", "onclick", "style"],
+    FORCE_BODY: true,
+  }),
+);
 
 const handleEnable = () => {
   emit("enable");

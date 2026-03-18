@@ -1,14 +1,8 @@
 <template>
   <div class="flex flex-col min-h-full">
-    <Breadcrumb
-      v-if="template"
-      :path="breadcrumbs"
-    >
+    <Breadcrumb v-if="template" :path="breadcrumbs">
       <template #left>
-        <div
-          v-if="canEditTemplate"
-          class="ml-5"
-        >
+        <div v-if="canEditTemplate" class="ml-5">
           <UButton
             color="neutral"
             size="sm"
@@ -37,10 +31,7 @@
             label="Copy Template URL"
           />
         </TrackClick>
-        <TrackClick
-          name="use_template_button_clicked"
-          class="mr-5"
-        >
+        <TrackClick name="use_template_button_clicked" class="mr-5">
           <UButton
             size="sm"
             :to="createFormWithTemplateUrl"
@@ -50,14 +41,13 @@
       </template>
     </Breadcrumb>
 
-    <p
-      v-if="template === null || !template"
-      class="text-center my-4"
-    >
+    <p v-if="template === null || !template" class="text-center my-4">
       We could not find this template.
     </p>
     <template v-else>
-      <section class="pt-12 bg-neutral-50 sm:pt-16 border-b pb-[250px] relative">
+      <section
+        class="pt-12 bg-neutral-50 sm:pt-16 border-b pb-[250px] relative"
+      >
         <div class="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
           <div
             class="flex flex-col items-center justify-center max-w-5xl gap-8 mx-auto md:gap-12 md:flex-row"
@@ -69,7 +59,7 @@
                 class="object-cover w-full h-full transition-all duration-200 group-hover:scale-110 absolute inset-0"
                 :src="template.image_url"
                 alt="Template cover image"
-              >
+              />
             </div>
 
             <div class="flex-1 text-center md:text-left relative">
@@ -91,11 +81,15 @@
         </div>
       </section>
 
-      <section class="w-full max-w-5xl relative px-4 mx-auto sm:px-6 lg:px-8 -mt-[210px]">
+      <section
+        class="w-full max-w-5xl relative px-4 mx-auto sm:px-6 lg:px-8 -mt-[210px]"
+      >
         <div
           class="p-4 mx-auto bg-white shadow-lg sm:p-6 lg:p-8 rounded-xl ring ring-inset ring-neutral-200 isolate"
         >
-          <p class="text-sm font-medium text-center text-neutral-500 -mt-2 mb-2">
+          <p
+            class="text-sm font-medium text-center text-neutral-500 -mt-2 mb-2"
+          >
             Template Preview
           </p>
           <div class="mb-4">
@@ -108,7 +102,7 @@
                   'flex flex-col',
                   form?.presentation_style === 'focused'
                     ? 'h-[650px] sm:h-[830px]'
-                    : 'min-h-[520px]'
+                    : 'min-h-[520px]',
                 ]"
               >
                 <OpenCompleteForm
@@ -139,8 +133,8 @@
             </div>
             <div class="flex items-center justify-center">
               <div class="text-left mx-auto text-neutral-500 text-xs mt-4">
-                ✓ Core features 100% free<br>
-                ✓ No credit card required<br>
+                ✓ Core features 100% free<br />
+                ✓ No credit card required<br />
                 ✓ No submissions limit on Free plan
               </div>
             </div>
@@ -153,13 +147,10 @@
           <div
             class="max-w-4xl mx-auto mt-16 space-y-12 sm:mt-16 sm:space-y-16"
           >
-            <div
-              class="nf-text"
-              v-html="template.description"
-            />
+            <div class="nf-text" v-html="sanitizedDescription" />
 
             <template v-if="template.questions?.length > 0">
-              <hr class="mt-12 border-neutral-200">
+              <hr class="mt-12 border-neutral-200" />
               <div>
                 <div class="text-center">
                   <h3
@@ -177,12 +168,14 @@
                     :key="ques_key"
                     class="space-y-4"
                   >
-                    <dt class="font-semibold text-neutral-900 dark:text-neutral-100">
+                    <dt
+                      class="font-semibold text-neutral-900 dark:text-neutral-100"
+                    >
                       {{ ques.question }}
                     </dt>
                     <dd
                       class="mt-2 leading-6 text-neutral-600 dark:text-neutral-400"
-                      v-html="ques.answer"
+                      v-html="sanitizeAnswer(ques.answer)"
                     />
                   </div>
                 </dl>
@@ -234,7 +227,9 @@
             </h4>
           </div>
 
-          <div class="grid grid-cols-1 mt-12 md:grid-cols-2 gap-x-8 gap-y-12 max-w-5xl mx-auto">
+          <div
+            class="grid grid-cols-1 mt-12 md:grid-cols-2 gap-x-8 gap-y-12 max-w-5xl mx-auto"
+          >
             <div
               class="flex flex-col items-center gap-4 text-center lg:items-start sm:text-left sm:items-start xl:flex-row"
             >
@@ -276,9 +271,6 @@
               </div>
             </div>
           </div>
-
-          <!-- add video here -->
-          <!--          <div class="max-w-5xl mx-auto mt-12 shadow-sm rounded-xl bg-blue-50 aspect-video" />-->
         </div>
       </section>
     </template>
@@ -288,60 +280,71 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from "vue"
-import { useRoute } from "vue-router"
-import FormTemplateModal from "~/components/open/forms/components/templates/FormTemplateModal.vue"
-import TemplateTags from "~/components/pages/templates/TemplateTags.vue"
-import SingleTemplate from "~/components/pages/templates/SingleTemplate.vue"
-import { FormMode } from "~/lib/forms/FormModeStrategy.js"
-import { cleanQuotes } from "~/lib/utils"
-import OpenCompleteForm from "~/components/open/forms/OpenCompleteForm.vue"
-import Breadcrumb from "~/components/app/Breadcrumb.vue"
-import TrackClick from "~/components/global/TrackClick.vue"
-import { handleDarkMode, useDarkMode } from "~/lib/forms/public-page.js"
+import { computed, ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import FormTemplateModal from "~/components/open/forms/components/templates/FormTemplateModal.vue";
+import TemplateTags from "~/components/pages/templates/TemplateTags.vue";
+import SingleTemplate from "~/components/pages/templates/SingleTemplate.vue";
+import { FormMode } from "~/lib/forms/FormModeStrategy.js";
+import { cleanQuotes } from "~/lib/utils";
+import OpenCompleteForm from "~/components/open/forms/OpenCompleteForm.vue";
+import Breadcrumb from "~/components/app/Breadcrumb.vue";
+import TrackClick from "~/components/global/TrackClick.vue";
+import { handleDarkMode, useDarkMode } from "~/lib/forms/public-page.js";
 
-const route = useRoute()
-const { detail, list } = useTemplates()
+const { $sanitize } = useNuxtApp();
 
-const { data: template, suspense: templateSuspense } = detail(route.params.slug)
-const { data: allTemplates } = list()
+const route = useRoute();
+const { detail, list } = useTemplates();
+
+const { data: template, suspense: templateSuspense } = detail(
+  route.params.slug,
+);
+const { data: allTemplates } = list();
 
 // Handle SSR suspense to prevent flash of error message
 if (import.meta.server) {
-  await templateSuspense()
+  await templateSuspense();
 }
 
 const form = computed(() => {
   if (!template.value) {
-    return null
+    return null;
   }
-  return template.value.structure
-})
+  return template.value.structure;
+});
 
 // Dark mode handling like editor preview
-const templatePreviewParent = ref(null)
-const darkMode = useDarkMode(templatePreviewParent)
+const templatePreviewParent = ref(null);
+const darkMode = useDarkMode(templatePreviewParent);
 onMounted(() => {
   if (template.value?.structure?.dark_mode) {
-    handleDarkMode(template.value.structure.dark_mode, templatePreviewParent.value)
+    handleDarkMode(
+      template.value.structure.dark_mode,
+      templatePreviewParent.value,
+    );
   }
-})
+});
 
 const relatedTemplates = computed(() => {
   if (!template.value?.related_templates || !allTemplates.value) {
-    return []
+    return [];
   }
-  const relatedSlugs = new Set(template.value.related_templates)
+  const relatedSlugs = new Set(template.value.related_templates);
   return allTemplates.value.filter(
     (t) => relatedSlugs.has(t.slug) && t.slug !== template.value.slug,
-  )
-})
+  );
+});
 
-const showFormTemplateModal = ref(false)
-const { data: user } = useAuth().user()
+const showFormTemplateModal = ref(false);
+const { data: user } = useAuth().user();
 const canEditTemplate = computed(
-  () => user.value && (user.value.admin || user.value.template_editor || template.value?.creator_id === user.value.id),
-)
+  () =>
+    user.value &&
+    (user.value.admin ||
+      user.value.template_editor ||
+      template.value?.creator_id === user.value.id),
+);
 
 const createFormWithTemplateUrl = computed(() => {
   if (!user.value) {
@@ -351,19 +354,19 @@ const createFormWithTemplateUrl = computed(() => {
         redirect: route.fullPath,
         template: route.params.slug,
       },
-    }
+    };
   }
   return {
     name: "forms-create",
     query: {
       template: route.params.slug,
     },
-  }
-})
+  };
+});
 
 const breadcrumbs = computed(() => {
   if (!template.value) {
-    return []
+    return [];
   }
   return [
     { name: "Templates", to: { name: "templates" } },
@@ -371,20 +374,28 @@ const breadcrumbs = computed(() => {
       name: template.value.name,
       to: { name: "templates-slug", params: { slug: template.value.slug } },
     },
-  ]
-})
+  ];
+});
 
 const copyTemplateUrl = () => {
-  navigator.clipboard.writeText(window.location.href)
-  useAlert().success("URL copied to clipboard!")
-}
+  navigator.clipboard.writeText(window.location.href);
+  useAlert().success("URL copied to clipboard!");
+};
+
+// Sanitize template.description — rich HTML from API, may contain arbitrary markup
+const sanitizedDescription = computed(() =>
+  $sanitize(template.value?.description),
+);
+
+// Sanitize each FAQ answer individually — ques.answer comes from API per-item in v-for
+const sanitizeAnswer = (answer) => $sanitize(answer);
 
 useOpnSeoMeta(
   computed(() => ({
     title: template.value?.name,
     description: template.value?.short_description,
   })),
-)
+);
 </script>
 
 <style>

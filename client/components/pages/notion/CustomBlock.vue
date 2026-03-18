@@ -1,15 +1,7 @@
 <template>
-  <div
-    v-if="innerJson"
-    id="custom-block"
-  >
-    <div
-      v-if="innerJson.type=='faq'"
-      class="rounded-lg bg-white z-10 pt-10"
-    >
-      <h2 class="font-medium">
-        Frequently Asked Questions
-      </h2>
+  <div v-if="innerJson" id="custom-block">
+    <div v-if="innerJson.type == 'faq'" class="rounded-lg bg-white z-10 pt-10">
+      <h2 class="font-medium">Frequently Asked Questions</h2>
       <dl class="pt-4 space-y-6">
         <div
           v-for="question in innerJson.content"
@@ -21,13 +13,13 @@
           </dt>
           <dd
             class="leading-6 text-neutral-600 dark:text-neutral-400"
-            v-html="question.content"
+            v-html="sanitizeQuestion(question.content)"
           />
         </div>
       </dl>
     </div>
     <div
-      v-else-if="innerJson.type=='cta'"
+      v-else-if="innerJson.type == 'cta'"
       class="rounded-lg relative bg-gradient-to-r from-blue-400 to-blue-600 shadow-ld p-8 z-10"
     >
       <div class="absolute inset-px rounded-[calc(var(--radius)-1px)]">
@@ -41,7 +33,11 @@
       </div>
       <div class="relative z-20 flex flex-col items-center gap-4 pb-1">
         <h2 class="text-xl md:text-2xl text-center font-medium text-white">
-          {{ innerJson.title ? innerJson.title : 'Ready to upgrade your OpnForm forms?' }}
+          {{
+            innerJson.title
+              ? innerJson.title
+              : "Ready to upgrade your OpnForm forms?"
+          }}
         </h2>
         <UButton
           to="/register"
@@ -59,11 +55,17 @@
 </template>
 
 <script setup>
-import { blockProps } from 'vue-notion'
-import useNotionBlock from '~/components/pages/notion/useNotionBlock.js'
+import { blockProps } from "vue-notion";
+import useNotionBlock from "~/components/pages/notion/useNotionBlock.js";
 
-const props = defineProps(blockProps)
+const { $sanitize } = useNuxtApp();
 
-const block = useNotionBlock(props)
-const innerJson = computed(() => block.innerJson.value)
+const props = defineProps(blockProps);
+
+const block = useNotionBlock(props);
+const innerJson = computed(() => block.innerJson.value);
+
+// Sanitize each FAQ answer individually — question.content comes from
+// Notion block JSON which is external content and cannot be trusted
+const sanitizeQuestion = (content) => $sanitize(content);
 </script>

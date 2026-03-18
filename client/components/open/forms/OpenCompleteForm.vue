@@ -66,7 +66,7 @@
             <template #description>
               <div
                 class="break-words whitespace-break-spaces"
-                v-html="form.closed_text"
+                v-html="sanitizedClosedText"
               />
             </template>
           </UAlert>
@@ -80,7 +80,7 @@
             <template #description>
               <div
                 class="break-words whitespace-break-spaces"
-                v-html="form.max_submissions_reached_text"
+                v-html="sanitizedMaxSubmissionsText"
               />
             </template>
           </UAlert>
@@ -155,6 +155,8 @@ import Loader from "~/components/global/Loader.vue";
 import { tailwindcssPaletteGenerator } from "~/lib/colors.js";
 import { useRouter } from "vue-router";
 
+const { $sanitize } = useNuxtApp();
+
 const props = defineProps({
   form: { type: Object, required: true },
   mode: {
@@ -226,6 +228,12 @@ if (props.form) {
     urlParams: new URLSearchParams(queryString),
   });
 }
+
+// Sanitized form alert texts — prevents stored XSS from form config fields
+const sanitizedClosedText = computed(() => $sanitize(props.form.closed_text));
+const sanitizedMaxSubmissionsText = computed(() =>
+  $sanitize(props.form.max_submissions_reached_text),
+);
 
 // Watch for changes to the form prop and update formManager
 watch(

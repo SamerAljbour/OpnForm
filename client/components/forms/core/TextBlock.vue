@@ -12,11 +12,12 @@
         :img-class="ui.mediaImg({ class: props.ui?.slots?.mediaImg })"
       />
     </div>
-    <div v-html="processedContent" />
+    <div v-html="sanitizedContent" />
   </div>
 </template>
 
 <script setup>
+import DOMPurify from "dompurify";
 import { useParseMention } from "@/composables/components/useParseMention";
 import { tv } from "tailwind-variants";
 import { textBlockTheme } from "~/lib/forms/themes/text-block.theme.js";
@@ -41,6 +42,33 @@ const processedContent = computed(() => {
     props.form,
     props.formData,
   );
+});
+
+const sanitizedContent = computed(() => {
+  if (!processedContent.value) return "";
+  return DOMPurify.sanitize(processedContent.value, {
+    ALLOWED_TAGS: [
+      "b",
+      "i",
+      "u",
+      "em",
+      "strong",
+      "a",
+      "p",
+      "br",
+      "ul",
+      "ol",
+      "li",
+      "h1",
+      "h2",
+      "h3",
+      "span",
+      "div",
+    ],
+    ALLOWED_ATTR: ["href", "target", "rel", "class"],
+    FORBID_ATTR: ["style", "onerror", "onload", "onclick"],
+    FORCE_BODY: true,
+  });
 });
 
 const injectedSize = inject("formSize", null);
